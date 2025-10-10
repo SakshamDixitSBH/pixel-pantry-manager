@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,20 +12,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { sampleGames } from "@/data/sampleData";
 import { Game } from "@/types/inventory";
 import { getConditionColor } from "@/utils/conditionColors";
 import { ItemDetailsModal } from "@/components/ItemDetailsModal";
 import { AddEditItemModal } from "@/components/AddEditItemModal";
 import { toast } from "sonner";
+import { inventoryApi } from "@/services/inventoryApi";
 
 const Games = () => {
-  const [games, setGames] = useState<Game[]>(sampleGames);
+  const [games, setGames] = useState<Game[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<Game | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Game | null>(null);
+
+  useEffect(() => {
+    setGames(inventoryApi.getGames());
+  }, []);
 
   const filteredGames = games.filter((game) =>
     game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,18 +51,15 @@ const Games = () => {
   };
 
   const handleDelete = (id: string) => {
-    setGames(games.filter((g) => g.id !== id));
+    inventoryApi.deleteGame(id);
+    setGames(inventoryApi.getGames());
     toast.success("Game deleted successfully");
   };
 
-  const handleSave = (item: Game) => {
-    if (editingItem) {
-      setGames(games.map((g) => (g.id === item.id ? item : g)));
-      toast.success("Game updated successfully");
-    } else {
-      setGames([...games, item]);
-      toast.success("Game added successfully");
-    }
+  const handleSave = async (item: Omit<Game, "photos">, photoFiles: File[]) => {
+    await inventoryApi.saveGame(item, photoFiles);
+    setGames(inventoryApi.getGames());
+    toast.success(editingItem ? "Game updated successfully" : "Game added successfully");
   };
 
   const handleRowClick = (game: Game) => {

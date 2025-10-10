@@ -12,34 +12,39 @@ interface AddEditItemModalProps {
   item: Console | Game | Accessory | null;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (item: Console | Game | Accessory) => void;
+  onSave: (item: Omit<Console | Game | Accessory, "photos">, photoFiles: File[]) => void;
   type: "console" | "game" | "accessory";
 }
 
 export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEditItemModalProps) => {
-  const [photos, setPhotos] = useState<string[]>(item?.photos || []);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [photoPreviews, setPhotoPreviews] = useState<string[]>(item?.photos || []);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    if (photos.length + files.length > 5) {
+    if (photoFiles.length + files.length > 5) {
       toast.error("Maximum 5 photos allowed");
       return;
     }
 
-    Array.from(files).forEach((file) => {
+    const newFiles = Array.from(files);
+    setPhotoFiles((prev) => [...prev, ...newFiles]);
+
+    newFiles.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotos((prev) => [...prev, reader.result as string]);
+        setPhotoPreviews((prev) => [...prev, reader.result as string]);
       };
       reader.readAsDataURL(file);
     });
   };
 
   const removePhoto = (index: number) => {
-    setPhotos((prev) => prev.filter((_, i) => i !== index));
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
+    setPhotoPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,7 +53,6 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
     
     const baseItem = {
       id: item?.id || Date.now().toString(),
-      photos,
       boughtPrice: parseFloat(formData.get("boughtPrice") as string),
       averageMarketPrice: parseFloat(formData.get("averageMarketPrice") as string),
       targetSellingPrice: parseFloat(formData.get("targetSellingPrice") as string),
@@ -63,7 +67,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
         version: formData.get("version") as ConsoleVersion,
         color: formData.get("color") as string,
         releaseYear: parseInt(formData.get("releaseYear") as string),
-      } as Console);
+      } as Console, photoFiles);
     } else if (type === "game") {
       onSave({
         ...baseItem,
@@ -73,7 +77,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
         condition: formData.get("condition") as Condition,
         consoleName: formData.get("consoleName") as ConsoleName,
         platform: formData.get("platform") as Platform,
-      } as Game);
+      } as Game, photoFiles);
     } else {
       onSave({
         ...baseItem,
@@ -83,7 +87,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
         model: formData.get("model") as string,
         condition: formData.get("condition") as Condition,
         consoleName: formData.get("consoleName") as ConsoleName,
-      } as Accessory);
+      } as Accessory, photoFiles);
     }
 
     onClose();
@@ -114,16 +118,16 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 type="button"
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={photos.length >= 5}
+                disabled={photoFiles.length >= 5}
                 className="w-full"
               >
                 <Upload className="w-4 h-4 mr-2" />
-                Upload Photos ({photos.length}/5)
+                Upload Photos ({photoFiles.length}/5)
               </Button>
 
-              {photos.length > 0 && (
+              {photoPreviews.length > 0 && (
                 <div className="grid grid-cols-5 gap-2">
-                  {photos.map((photo, index) => (
+                  {photoPreviews.map((photo, index) => (
                     <div key={index} className="relative aspect-square rounded-lg border overflow-hidden group">
                       <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
                       <button

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,20 +12,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { sampleAccessories } from "@/data/sampleData";
 import { Accessory } from "@/types/inventory";
 import { getConditionColor } from "@/utils/conditionColors";
 import { ItemDetailsModal } from "@/components/ItemDetailsModal";
 import { AddEditItemModal } from "@/components/AddEditItemModal";
 import { toast } from "sonner";
+import { inventoryApi } from "@/services/inventoryApi";
 
 const Accessories = () => {
-  const [accessories, setAccessories] = useState<Accessory[]>(sampleAccessories);
+  const [accessories, setAccessories] = useState<Accessory[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<Accessory | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Accessory | null>(null);
+
+  useEffect(() => {
+    setAccessories(inventoryApi.getAccessories());
+  }, []);
 
   const filteredAccessories = accessories.filter((accessory) =>
     accessory.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,18 +51,15 @@ const Accessories = () => {
   };
 
   const handleDelete = (id: string) => {
-    setAccessories(accessories.filter((a) => a.id !== id));
+    inventoryApi.deleteAccessory(id);
+    setAccessories(inventoryApi.getAccessories());
     toast.success("Accessory deleted successfully");
   };
 
-  const handleSave = (item: Accessory) => {
-    if (editingItem) {
-      setAccessories(accessories.map((a) => (a.id === item.id ? item : a)));
-      toast.success("Accessory updated successfully");
-    } else {
-      setAccessories([...accessories, item]);
-      toast.success("Accessory added successfully");
-    }
+  const handleSave = async (item: Omit<Accessory, "photos">, photoFiles: File[]) => {
+    await inventoryApi.saveAccessory(item, photoFiles);
+    setAccessories(inventoryApi.getAccessories());
+    toast.success(editingItem ? "Accessory updated successfully" : "Accessory added successfully");
   };
 
   const handleRowClick = (accessory: Accessory) => {

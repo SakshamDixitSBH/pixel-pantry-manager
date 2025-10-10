@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,20 +12,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { sampleConsoles } from "@/data/sampleData";
 import { Console } from "@/types/inventory";
 import { getVersionBadgeColor } from "@/utils/conditionColors";
 import { ItemDetailsModal } from "@/components/ItemDetailsModal";
 import { AddEditItemModal } from "@/components/AddEditItemModal";
 import { toast } from "sonner";
+import { inventoryApi } from "@/services/inventoryApi";
 
 const Consoles = () => {
-  const [consoles, setConsoles] = useState<Console[]>(sampleConsoles);
+  const [consoles, setConsoles] = useState<Console[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<Console | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isAddEditOpen, setIsAddEditOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Console | null>(null);
+
+  useEffect(() => {
+    setConsoles(inventoryApi.getConsoles());
+  }, []);
 
   const filteredConsoles = consoles.filter((console) =>
     console.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,18 +51,15 @@ const Consoles = () => {
   };
 
   const handleDelete = (id: string) => {
-    setConsoles(consoles.filter((c) => c.id !== id));
+    inventoryApi.deleteConsole(id);
+    setConsoles(inventoryApi.getConsoles());
     toast.success("Console deleted successfully");
   };
 
-  const handleSave = (item: Console) => {
-    if (editingItem) {
-      setConsoles(consoles.map((c) => (c.id === item.id ? item : c)));
-      toast.success("Console updated successfully");
-    } else {
-      setConsoles([...consoles, item]);
-      toast.success("Console added successfully");
-    }
+  const handleSave = async (item: Omit<Console, "photos">, photoFiles: File[]) => {
+    await inventoryApi.saveConsole(item, photoFiles);
+    setConsoles(inventoryApi.getConsoles());
+    toast.success(editingItem ? "Console updated successfully" : "Console added successfully");
   };
 
   const handleRowClick = (console: Console) => {
