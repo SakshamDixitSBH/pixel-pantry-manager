@@ -8,6 +8,30 @@ import { Console, Game, Accessory, ConsoleName, ConsoleVersion, Condition, Platf
 import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
+const BRANDS = [
+  "NINTENDO",
+  "SONY", 
+  "SEGA",
+  "ATARI",
+  "MICROSOFT",
+  "AMIGA",
+  "NAMCO",
+  "VICTOR",
+  "SONY_COMPUTER_ENTERTAINMENT",
+  "ELECTRONIC_ARTS",
+  "UBISOFT",
+  "ROCKSTAR",
+  "BANDAI",
+  "GAME_FREAK"
+] as const;
+
+const formatBrand = (brand: string) => {
+  return brand
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 interface AddEditItemModalProps {
   item: Console | Game | Accessory | null;
   isOpen: boolean;
@@ -95,16 +119,17 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{item ? "Edit" : "Add"} {type === "console" ? "Console" : type === "game" ? "Game" : "Accessory"}</DialogTitle>
+      <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden flex flex-col">
+        <DialogHeader className="pb-4 border-b">
+          <DialogTitle className="text-2xl font-semibold">{item ? "Edit" : "Add"} {type === "console" ? "Console" : type === "game" ? "Game" : "Accessory"}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Photos Upload */}
-          <div>
-            <Label>Photos (Max 5)</Label>
-            <div className="mt-2 space-y-3">
+        <div className="overflow-y-auto flex-1 px-1">
+          <form onSubmit={handleSubmit} className="space-y-6 py-4">
+            {/* Photos Upload */}
+            <div className="p-4 rounded-lg border bg-muted/20">
+              <Label className="text-base font-semibold">Photos (Max 5)</Label>
+              <div className="mt-3 space-y-3">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -114,47 +139,49 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 className="hidden"
               />
               
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={photoFiles.length >= 5}
-                className="w-full"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Photos ({photoFiles.length}/5)
-              </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={photoFiles.length >= 5}
+                  className="w-full h-24 border-2 border-dashed hover:border-primary transition-colors"
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <Upload className="w-6 h-6" />
+                    <span className="text-sm">Upload Photos ({photoFiles.length}/5)</span>
+                  </div>
+                </Button>
 
-              {photoPreviews.length > 0 && (
-                <div className="grid grid-cols-5 gap-2">
-                  {photoPreviews.map((photo, index) => (
-                    <div key={index} className="relative aspect-square rounded-lg border overflow-hidden group">
-                      <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => removePhoto(index)}
-                        className="absolute top-1 right-1 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+                {photoPreviews.length > 0 && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    {photoPreviews.map((photo, index) => (
+                      <div key={index} className="relative aspect-square rounded-lg border-2 overflow-hidden group hover:border-primary transition-colors">
+                        <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => removePhoto(index)}
+                          className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:scale-110"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Dynamic Form Fields */}
-          <div className="grid grid-cols-2 gap-4">
+            {/* Dynamic Form Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {type === "console" && (
               <>
                 <div>
                   <Label htmlFor="name">Console Name</Label>
                   <Select name="name" defaultValue={item ? (item as Console).name : undefined} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select console" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover">
                       {Object.values(ConsoleName).map((name) => (
                         <SelectItem key={name} value={name}>{name}</SelectItem>
                       ))}
@@ -163,15 +190,24 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 </div>
                 <div>
                   <Label htmlFor="brand">Brand</Label>
-                  <Input id="brand" name="brand" defaultValue={item ? (item as Console).brand : ""} required />
+                  <Select name="brand" defaultValue={item ? (item as Console).brand : undefined} required>
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Select brand" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover">
+                      {BRANDS.map((brand) => (
+                        <SelectItem key={brand} value={brand}>{formatBrand(brand)}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label htmlFor="version">Version</Label>
                   <Select name="version" defaultValue={item ? (item as Console).version : undefined} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select version" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover">
                       {Object.values(ConsoleVersion).map((version) => (
                         <SelectItem key={version} value={version}>{version}</SelectItem>
                       ))}
@@ -180,11 +216,11 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 </div>
                 <div>
                   <Label htmlFor="color">Color</Label>
-                  <Input id="color" name="color" defaultValue={item ? (item as Console).color : ""} required />
+                  <Input id="color" name="color" defaultValue={item ? (item as Console).color : ""} className="h-11" required />
                 </div>
                 <div>
                   <Label htmlFor="releaseYear">Release Year</Label>
-                  <Input id="releaseYear" name="releaseYear" type="number" defaultValue={item ? (item as Console).releaseYear : ""} required />
+                  <Input id="releaseYear" name="releaseYear" type="number" defaultValue={item ? (item as Console).releaseYear : ""} className="h-11" required />
                 </div>
               </>
             )}
@@ -193,19 +229,19 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
               <>
                 <div>
                   <Label htmlFor="title">Title</Label>
-                  <Input id="title" name="title" defaultValue={item ? (item as Game).title : ""} required />
+                  <Input id="title" name="title" defaultValue={item ? (item as Game).title : ""} className="h-11" required />
                 </div>
                 <div>
                   <Label htmlFor="genre">Genre</Label>
-                  <Input id="genre" name="genre" defaultValue={item ? (item as Game).genre : ""} required />
+                  <Input id="genre" name="genre" defaultValue={item ? (item as Game).genre : ""} className="h-11" required />
                 </div>
                 <div>
                   <Label htmlFor="consoleName">Console</Label>
                   <Select name="consoleName" defaultValue={item ? (item as Game).consoleName : undefined} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select console" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover">
                       {Object.values(ConsoleName).map((name) => (
                         <SelectItem key={name} value={name}>{name}</SelectItem>
                       ))}
@@ -215,10 +251,10 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 <div>
                   <Label htmlFor="platform">Platform</Label>
                   <Select name="platform" defaultValue={item ? (item as Game).platform : undefined} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select platform" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover">
                       {Object.values(Platform).map((platform) => (
                         <SelectItem key={platform} value={platform}>{platform}</SelectItem>
                       ))}
@@ -228,10 +264,10 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 <div>
                   <Label htmlFor="condition">Condition</Label>
                   <Select name="condition" defaultValue={item ? (item as Game).condition : undefined} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select condition" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover">
                       {Object.values(Condition).map((condition) => (
                         <SelectItem key={condition} value={condition}>{condition}</SelectItem>
                       ))}
@@ -240,7 +276,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 </div>
                 <div>
                   <Label htmlFor="releaseYear">Release Year</Label>
-                  <Input id="releaseYear" name="releaseYear" type="number" defaultValue={item ? (item as Game).releaseYear : ""} required />
+                  <Input id="releaseYear" name="releaseYear" type="number" defaultValue={item ? (item as Game).releaseYear : ""} className="h-11" required />
                 </div>
               </>
             )}
@@ -249,15 +285,15 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
               <>
                 <div>
                   <Label htmlFor="name">Name</Label>
-                  <Input id="name" name="name" defaultValue={item ? (item as Accessory).name : ""} required />
+                  <Input id="name" name="name" defaultValue={item ? (item as Accessory).name : ""} className="h-11" required />
                 </div>
                 <div>
                   <Label htmlFor="accessoryType">Type</Label>
                   <Select name="accessoryType" defaultValue={item ? (item as Accessory).type : undefined} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover">
                       {Object.values(AccessoryType).map((type) => (
                         <SelectItem key={type} value={type}>{type}</SelectItem>
                       ))}
@@ -267,10 +303,10 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 <div>
                   <Label htmlFor="consoleName">Console</Label>
                   <Select name="consoleName" defaultValue={item ? (item as Accessory).consoleName : undefined} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select console" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover">
                       {Object.values(ConsoleName).map((name) => (
                         <SelectItem key={name} value={name}>{name}</SelectItem>
                       ))}
@@ -279,19 +315,19 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 </div>
                 <div>
                   <Label htmlFor="model">Model</Label>
-                  <Input id="model" name="model" defaultValue={item ? (item as Accessory).model : ""} required />
+                  <Input id="model" name="model" defaultValue={item ? (item as Accessory).model : ""} className="h-11" required />
                 </div>
                 <div>
                   <Label htmlFor="color">Color</Label>
-                  <Input id="color" name="color" defaultValue={item ? (item as Accessory).color : ""} required />
+                  <Input id="color" name="color" defaultValue={item ? (item as Accessory).color : ""} className="h-11" required />
                 </div>
                 <div>
                   <Label htmlFor="condition">Condition</Label>
                   <Select name="condition" defaultValue={item ? (item as Accessory).condition : undefined} required>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select condition" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-popover">
                       {Object.values(Condition).map((condition) => (
                         <SelectItem key={condition} value={condition}>{condition}</SelectItem>
                       ))}
@@ -303,23 +339,24 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
 
             <div>
               <Label htmlFor="boughtPrice">Bought Price</Label>
-              <Input id="boughtPrice" name="boughtPrice" type="number" step="0.01" defaultValue={item?.boughtPrice || ""} required />
+              <Input id="boughtPrice" name="boughtPrice" type="number" step="0.01" defaultValue={item?.boughtPrice || ""} className="h-11" required />
             </div>
             <div>
               <Label htmlFor="averageMarketPrice">Market Price</Label>
-              <Input id="averageMarketPrice" name="averageMarketPrice" type="number" step="0.01" defaultValue={item?.averageMarketPrice || ""} required />
+              <Input id="averageMarketPrice" name="averageMarketPrice" type="number" step="0.01" defaultValue={item?.averageMarketPrice || ""} className="h-11" required />
             </div>
             <div>
               <Label htmlFor="targetSellingPrice">Target Price</Label>
-              <Input id="targetSellingPrice" name="targetSellingPrice" type="number" step="0.01" defaultValue={item?.targetSellingPrice || ""} required />
+              <Input id="targetSellingPrice" name="targetSellingPrice" type="number" step="0.01" defaultValue={item?.targetSellingPrice || ""} className="h-11" required />
             </div>
-          </div>
+            </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-            <Button type="submit">Save</Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="pt-4 border-t mt-6 gap-2">
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1 sm:flex-none">Cancel</Button>
+              <Button type="submit" className="flex-1 sm:flex-none">Save Item</Button>
+            </DialogFooter>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
