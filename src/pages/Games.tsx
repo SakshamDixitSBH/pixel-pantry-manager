@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,11 +15,17 @@ import {
 import { sampleGames } from "@/data/sampleData";
 import { Game } from "@/types/inventory";
 import { getConditionColor } from "@/utils/conditionColors";
+import { ItemDetailsModal } from "@/components/ItemDetailsModal";
+import { AddEditItemModal } from "@/components/AddEditItemModal";
 import { toast } from "sonner";
 
 const Games = () => {
-  const [games] = useState<Game[]>(sampleGames);
+  const [games, setGames] = useState<Game[]>(sampleGames);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedItem, setSelectedItem] = useState<Game | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isAddEditOpen, setIsAddEditOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<Game | null>(null);
 
   const filteredGames = games.filter((game) =>
     game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -28,15 +34,36 @@ const Games = () => {
   );
 
   const handleAdd = () => {
-    toast.info("Add Game feature - Connect to your backend API");
+    setEditingItem(null);
+    setIsAddEditOpen(true);
   };
 
   const handleEdit = (id: string) => {
-    toast.info(`Edit game ${id} - Connect to your backend API`);
+    const item = games.find((g) => g.id === id);
+    if (item) {
+      setEditingItem(item);
+      setIsAddEditOpen(true);
+    }
   };
 
   const handleDelete = (id: string) => {
-    toast.info(`Delete game ${id} - Connect to your backend API`);
+    setGames(games.filter((g) => g.id !== id));
+    toast.success("Game deleted successfully");
+  };
+
+  const handleSave = (item: Game) => {
+    if (editingItem) {
+      setGames(games.map((g) => (g.id === item.id ? item : g)));
+      toast.success("Game updated successfully");
+    } else {
+      setGames([...games, item]);
+      toast.success("Game added successfully");
+    }
+  };
+
+  const handleRowClick = (game: Game) => {
+    setSelectedItem(game);
+    setIsDetailsOpen(true);
   };
 
   return (
@@ -72,6 +99,7 @@ const Games = () => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
+                  <TableHead className="min-w-[80px]">Photo</TableHead>
                   <TableHead className="min-w-[180px]">Title</TableHead>
                   <TableHead className="min-w-[120px]">Genre</TableHead>
                   <TableHead className="min-w-[150px]">Console</TableHead>
@@ -86,7 +114,20 @@ const Games = () => {
               </TableHeader>
               <TableBody>
                 {filteredGames.map((game) => (
-                  <TableRow key={game.id} className="hover:bg-muted/30 transition-colors">
+                  <TableRow 
+                    key={game.id} 
+                    className="hover:bg-muted/30 transition-colors cursor-pointer"
+                    onClick={() => handleRowClick(game)}
+                  >
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <div className="w-12 h-12 rounded-md border bg-muted flex items-center justify-center overflow-hidden">
+                        {game.photos && game.photos.length > 0 ? (
+                          <img src={game.photos[0]} alt="Game" className="w-full h-full object-cover" />
+                        ) : (
+                          <ImageIcon className="w-5 h-5 text-muted-foreground" />
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="font-semibold">{game.title}</TableCell>
                     <TableCell>{game.genre}</TableCell>
                     <TableCell>{game.consoleName}</TableCell>
@@ -104,7 +145,7 @@ const Games = () => {
                       ${game.averageMarketPrice.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-right">${game.targetSellingPrice.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-2">
                         <Button
                           variant="ghost"
@@ -129,6 +170,21 @@ const Games = () => {
           </div>
         </CardContent>
       </Card>
+
+      <ItemDetailsModal
+        item={selectedItem}
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        type="game"
+      />
+
+      <AddEditItemModal
+        item={editingItem}
+        isOpen={isAddEditOpen}
+        onClose={() => setIsAddEditOpen(false)}
+        onSave={handleSave}
+        type="game"
+      />
     </div>
   );
 };

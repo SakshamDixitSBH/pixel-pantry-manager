@@ -11,6 +11,7 @@ export const sampleConsoles: Console[] = [
     boughtPrice: 499.99,
     averageMarketPrice: 549.99,
     targetSellingPrice: 599.99,
+    photos: [],
     createdAt: new Date("2024-01-15"),
   },
   {
@@ -23,6 +24,7 @@ export const sampleConsoles: Console[] = [
     boughtPrice: 499.99,
     averageMarketPrice: 529.99,
     targetSellingPrice: 579.99,
+    photos: [],
     createdAt: new Date("2024-02-20"),
   },
   {
@@ -35,6 +37,7 @@ export const sampleConsoles: Console[] = [
     boughtPrice: 299.99,
     averageMarketPrice: 319.99,
     targetSellingPrice: 349.99,
+    photos: [],
     createdAt: new Date("2024-01-10"),
   },
   {
@@ -47,6 +50,7 @@ export const sampleConsoles: Console[] = [
     boughtPrice: 249.99,
     averageMarketPrice: 279.99,
     targetSellingPrice: 319.99,
+    photos: [],
     createdAt: new Date("2023-12-05"),
   },
 ];
@@ -63,6 +67,7 @@ export const sampleGames: Game[] = [
     targetSellingPrice: 59.99,
     consoleName: ConsoleName.PlayStation4,
     platform: Platform.Disc,
+    photos: [],
     createdAt: new Date("2024-01-20"),
   },
   {
@@ -76,6 +81,7 @@ export const sampleGames: Game[] = [
     targetSellingPrice: 79.99,
     consoleName: ConsoleName.XboxSeriesX,
     platform: Platform.Disc,
+    photos: [],
     createdAt: new Date("2024-02-15"),
   },
   {
@@ -89,6 +95,7 @@ export const sampleGames: Game[] = [
     targetSellingPrice: 64.99,
     consoleName: ConsoleName.NintendoSwitch,
     platform: Platform.Cartridge,
+    photos: [],
     createdAt: new Date("2024-01-12"),
   },
   {
@@ -102,6 +109,7 @@ export const sampleGames: Game[] = [
     targetSellingPrice: 49.99,
     consoleName: ConsoleName.PlayStation4,
     platform: Platform.Disc,
+    photos: [],
     createdAt: new Date("2023-12-28"),
   },
   {
@@ -115,6 +123,7 @@ export const sampleGames: Game[] = [
     targetSellingPrice: 69.99,
     consoleName: ConsoleName.PlayStation5,
     platform: Platform.Disc,
+    photos: [],
     createdAt: new Date("2024-01-25"),
   },
 ];
@@ -131,6 +140,7 @@ export const sampleAccessories: Accessory[] = [
     averageMarketPrice: 74.99,
     targetSellingPrice: 84.99,
     consoleName: ConsoleName.PlayStation5,
+    photos: [],
     createdAt: new Date("2024-01-16"),
   },
   {
@@ -144,6 +154,7 @@ export const sampleAccessories: Accessory[] = [
     averageMarketPrice: 64.99,
     targetSellingPrice: 74.99,
     consoleName: ConsoleName.XboxSeriesX,
+    photos: [],
     createdAt: new Date("2024-02-21"),
   },
   {
@@ -157,6 +168,7 @@ export const sampleAccessories: Accessory[] = [
     averageMarketPrice: 12.99,
     targetSellingPrice: 15.99,
     consoleName: ConsoleName.PlayStation5,
+    photos: [],
     createdAt: new Date("2024-01-17"),
   },
   {
@@ -170,6 +182,7 @@ export const sampleAccessories: Accessory[] = [
     averageMarketPrice: 64.99,
     targetSellingPrice: 74.99,
     consoleName: ConsoleName.NintendoSwitch,
+    photos: [],
     createdAt: new Date("2024-01-13"),
   },
 ];

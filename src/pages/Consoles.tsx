@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,11 +15,17 @@ import {
 import { sampleConsoles } from "@/data/sampleData";
 import { Console } from "@/types/inventory";
 import { getVersionBadgeColor } from "@/utils/conditionColors";
+import { ItemDetailsModal } from "@/components/ItemDetailsModal";
+import { AddEditItemModal } from "@/components/AddEditItemModal";
 import { toast } from "sonner";
 
 const Consoles = () => {
-  const [consoles] = useState<Console[]>(sampleConsoles);
+  const [consoles, setConsoles] = useState<Console[]>(sampleConsoles);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedItem, setSelectedItem] = useState<Console | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isAddEditOpen, setIsAddEditOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<Console | null>(null);
 
   const filteredConsoles = consoles.filter((console) =>
     console.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -28,15 +34,36 @@ const Consoles = () => {
   );
 
   const handleAdd = () => {
-    toast.info("Add Console feature - Connect to your backend API");
+    setEditingItem(null);
+    setIsAddEditOpen(true);
   };
 
   const handleEdit = (id: string) => {
-    toast.info(`Edit console ${id} - Connect to your backend API`);
+    const item = consoles.find((c) => c.id === id);
+    if (item) {
+      setEditingItem(item);
+      setIsAddEditOpen(true);
+    }
   };
 
   const handleDelete = (id: string) => {
-    toast.info(`Delete console ${id} - Connect to your backend API`);
+    setConsoles(consoles.filter((c) => c.id !== id));
+    toast.success("Console deleted successfully");
+  };
+
+  const handleSave = (item: Console) => {
+    if (editingItem) {
+      setConsoles(consoles.map((c) => (c.id === item.id ? item : c)));
+      toast.success("Console updated successfully");
+    } else {
+      setConsoles([...consoles, item]);
+      toast.success("Console added successfully");
+    }
+  };
+
+  const handleRowClick = (console: Console) => {
+    setSelectedItem(console);
+    setIsDetailsOpen(true);
   };
 
   return (
@@ -72,6 +99,7 @@ const Consoles = () => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
+                  <TableHead className="min-w-[80px]">Photo</TableHead>
                   <TableHead className="min-w-[150px]">Console</TableHead>
                   <TableHead className="min-w-[100px]">Brand</TableHead>
                   <TableHead className="min-w-[100px]">Version</TableHead>
@@ -85,7 +113,20 @@ const Consoles = () => {
               </TableHeader>
               <TableBody>
                 {filteredConsoles.map((console) => (
-                  <TableRow key={console.id} className="hover:bg-muted/30 transition-colors">
+                  <TableRow 
+                    key={console.id} 
+                    className="hover:bg-muted/30 transition-colors cursor-pointer"
+                    onClick={() => handleRowClick(console)}
+                  >
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <div className="w-12 h-12 rounded-md border bg-muted flex items-center justify-center overflow-hidden">
+                        {console.photos && console.photos.length > 0 ? (
+                          <img src={console.photos[0]} alt="Console" className="w-full h-full object-cover" />
+                        ) : (
+                          <ImageIcon className="w-5 h-5 text-muted-foreground" />
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="font-semibold">{console.name}</TableCell>
                     <TableCell>{console.brand}</TableCell>
                     <TableCell>
@@ -100,7 +141,7 @@ const Consoles = () => {
                       ${console.averageMarketPrice.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-right">${console.targetSellingPrice.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-2">
                         <Button
                           variant="ghost"
@@ -125,6 +166,21 @@ const Consoles = () => {
           </div>
         </CardContent>
       </Card>
+
+      <ItemDetailsModal
+        item={selectedItem}
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        type="console"
+      />
+
+      <AddEditItemModal
+        item={editingItem}
+        isOpen={isAddEditOpen}
+        onClose={() => setIsAddEditOpen(false)}
+        onSave={handleSave}
+        type="console"
+      />
     </div>
   );
 };

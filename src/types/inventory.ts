@@ -60,6 +60,7 @@ export interface Console {
   boughtPrice: number;
   averageMarketPrice: number;
   targetSellingPrice: number;
+  photos: string[];
   createdAt: Date;
 }
 
@@ -74,6 +75,7 @@ export interface Game {
   targetSellingPrice: number;
   consoleName: ConsoleName;
   platform: Platform;
+  photos: string[];
   createdAt: Date;
 }
 
@@ -88,5 +90,6 @@ export interface Accessory {
   averageMarketPrice: number;
   targetSellingPrice: number;
   consoleName: ConsoleName;
+  photos: string[];
   createdAt: Date;
 }

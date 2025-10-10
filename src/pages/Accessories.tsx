@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,11 +15,17 @@ import {
 import { sampleAccessories } from "@/data/sampleData";
 import { Accessory } from "@/types/inventory";
 import { getConditionColor } from "@/utils/conditionColors";
+import { ItemDetailsModal } from "@/components/ItemDetailsModal";
+import { AddEditItemModal } from "@/components/AddEditItemModal";
 import { toast } from "sonner";
 
 const Accessories = () => {
-  const [accessories] = useState<Accessory[]>(sampleAccessories);
+  const [accessories, setAccessories] = useState<Accessory[]>(sampleAccessories);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedItem, setSelectedItem] = useState<Accessory | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isAddEditOpen, setIsAddEditOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<Accessory | null>(null);
 
   const filteredAccessories = accessories.filter((accessory) =>
     accessory.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -28,15 +34,36 @@ const Accessories = () => {
   );
 
   const handleAdd = () => {
-    toast.info("Add Accessory feature - Connect to your backend API");
+    setEditingItem(null);
+    setIsAddEditOpen(true);
   };
 
   const handleEdit = (id: string) => {
-    toast.info(`Edit accessory ${id} - Connect to your backend API`);
+    const item = accessories.find((a) => a.id === id);
+    if (item) {
+      setEditingItem(item);
+      setIsAddEditOpen(true);
+    }
   };
 
   const handleDelete = (id: string) => {
-    toast.info(`Delete accessory ${id} - Connect to your backend API`);
+    setAccessories(accessories.filter((a) => a.id !== id));
+    toast.success("Accessory deleted successfully");
+  };
+
+  const handleSave = (item: Accessory) => {
+    if (editingItem) {
+      setAccessories(accessories.map((a) => (a.id === item.id ? item : a)));
+      toast.success("Accessory updated successfully");
+    } else {
+      setAccessories([...accessories, item]);
+      toast.success("Accessory added successfully");
+    }
+  };
+
+  const handleRowClick = (accessory: Accessory) => {
+    setSelectedItem(accessory);
+    setIsDetailsOpen(true);
   };
 
   return (
@@ -72,6 +99,7 @@ const Accessories = () => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
+                  <TableHead className="min-w-[80px]">Photo</TableHead>
                   <TableHead className="min-w-[150px]">Name</TableHead>
                   <TableHead className="min-w-[120px]">Type</TableHead>
                   <TableHead className="min-w-[150px]">Console</TableHead>
@@ -86,7 +114,20 @@ const Accessories = () => {
               </TableHeader>
               <TableBody>
                 {filteredAccessories.map((accessory) => (
-                  <TableRow key={accessory.id} className="hover:bg-muted/30 transition-colors">
+                  <TableRow 
+                    key={accessory.id} 
+                    className="hover:bg-muted/30 transition-colors cursor-pointer"
+                    onClick={() => handleRowClick(accessory)}
+                  >
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <div className="w-12 h-12 rounded-md border bg-muted flex items-center justify-center overflow-hidden">
+                        {accessory.photos && accessory.photos.length > 0 ? (
+                          <img src={accessory.photos[0]} alt="Accessory" className="w-full h-full object-cover" />
+                        ) : (
+                          <ImageIcon className="w-5 h-5 text-muted-foreground" />
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell className="font-semibold">{accessory.name}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{accessory.type}</Badge>
@@ -104,7 +145,7 @@ const Accessories = () => {
                       ${accessory.averageMarketPrice.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-right">${accessory.targetSellingPrice.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center justify-end gap-2">
                         <Button
                           variant="ghost"
@@ -129,6 +170,21 @@ const Accessories = () => {
           </div>
         </CardContent>
       </Card>
+
+      <ItemDetailsModal
+        item={selectedItem}
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        type="accessory"
+      />
+
+      <AddEditItemModal
+        item={editingItem}
+        isOpen={isAddEditOpen}
+        onClose={() => setIsAddEditOpen(false)}
+        onSave={handleSave}
+        type="accessory"
+      />
     </div>
   );
 };
