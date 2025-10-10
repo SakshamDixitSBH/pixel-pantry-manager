@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Console, Game, Accessory } from "@/types/inventory";
 import { getConditionColor, getVersionBadgeColor } from "@/utils/conditionColors";
 import { Image as ImageIcon } from "lucide-react";
+import { ImageViewerModal } from "@/components/ImageViewerModal";
 
 interface ItemDetailsModalProps {
   item: Console | Game | Accessory | null;
@@ -12,7 +14,15 @@ interface ItemDetailsModalProps {
 }
 
 export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsModalProps) => {
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
   if (!item) return null;
+
+  const handleImageClick = (index: number) => {
+    setSelectedImageIndex(index);
+    setImageViewerOpen(true);
+  };
 
   const renderDetails = () => {
     if (type === "console") {
@@ -124,7 +134,11 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
             {item.photos && item.photos.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                 {item.photos.map((photo, index) => (
-                  <div key={index} className="aspect-square rounded-lg border overflow-hidden bg-muted">
+                  <div 
+                    key={index} 
+                    className="aspect-square rounded-lg border overflow-hidden bg-muted cursor-pointer hover:ring-2 hover:ring-primary transition-all"
+                    onClick={() => handleImageClick(index)}
+                  >
                     <img
                       src={photo}
                       alt={`Photo ${index + 1}`}
@@ -168,6 +182,14 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
             </div>
           </div>
         </div>
+
+        <ImageViewerModal
+          images={item.photos || []}
+          currentIndex={selectedImageIndex}
+          isOpen={imageViewerOpen}
+          onClose={() => setImageViewerOpen(false)}
+          onNavigate={setSelectedImageIndex}
+        />
       </DialogContent>
     </Dialog>
   );
