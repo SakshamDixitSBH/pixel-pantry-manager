@@ -57,7 +57,6 @@ export interface Console {
   brand: string;
   version: ConsoleVersion;
   color: string;
-  releaseYear: number;
   boughtPrice: number;
   averageMarketPrice: number;
   targetSellingPrice: number;
@@ -70,7 +69,6 @@ export interface Game {
   sku: string;
   title: string;
   genre: string;
-  releaseYear: number;
   condition: Condition;
   boughtPrice: number;
   averageMarketPrice: number;

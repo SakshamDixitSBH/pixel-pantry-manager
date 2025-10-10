@@ -90,14 +90,12 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
         brand: formData.get("brand") as string,
         version: formData.get("version") as ConsoleVersion,
         color: formData.get("color") as string,
-        releaseYear: parseInt(formData.get("releaseYear") as string),
       } as Console, photoFiles);
     } else if (type === "game") {
       onSave({
         ...baseItem,
         title: formData.get("title") as string,
         genre: formData.get("genre") as string,
-        releaseYear: parseInt(formData.get("releaseYear") as string),
         condition: formData.get("condition") as Condition,
         consoleName: formData.get("consoleName") as ConsoleName,
         platform: formData.get("platform") as Platform,
@@ -226,10 +224,6 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                   <Label htmlFor="color">Color</Label>
                   <Input id="color" name="color" defaultValue={item ? (item as Console).color : ""} className="h-11" required />
                 </div>
-                <div>
-                  <Label htmlFor="releaseYear">Release Year</Label>
-                  <Input id="releaseYear" name="releaseYear" type="number" defaultValue={item ? (item as Console).releaseYear : ""} className="h-11" required />
-                </div>
               </>
             )}
 
@@ -281,10 +275,6 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-                <div>
-                  <Label htmlFor="releaseYear">Release Year</Label>
-                  <Input id="releaseYear" name="releaseYear" type="number" defaultValue={item ? (item as Game).releaseYear : ""} className="h-11" required />
                 </div>
               </>
             )}

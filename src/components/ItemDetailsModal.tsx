@@ -46,10 +46,6 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
               <p className="text-sm text-muted-foreground">Color</p>
               <p className="font-semibold">{console.color}</p>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Release Year</p>
-              <p className="font-semibold">{console.releaseYear}</p>
-            </div>
           </div>
         </>
       );
@@ -77,10 +73,6 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
             <div>
               <p className="text-sm text-muted-foreground">Condition</p>
               <Badge className={getConditionColor(game.condition)}>{game.condition}</Badge>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Release Year</p>
-              <p className="font-semibold">{game.releaseYear}</p>
             </div>
           </div>
         </>

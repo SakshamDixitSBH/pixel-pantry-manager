@@ -105,7 +105,6 @@ const Consoles = () => {
                   <TableHead className="min-w-[100px]">Brand</TableHead>
                   <TableHead className="min-w-[100px]">Version</TableHead>
                   <TableHead className="min-w-[100px]">Color</TableHead>
-                  <TableHead className="min-w-[80px]">Year</TableHead>
                   <TableHead className="text-right min-w-[100px]">Bought</TableHead>
                   <TableHead className="text-right min-w-[100px]">Market</TableHead>
                   <TableHead className="text-right min-w-[100px]">Target</TableHead>
@@ -136,7 +135,6 @@ const Consoles = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>{console.color}</TableCell>
-                    <TableCell>{console.releaseYear}</TableCell>
                     <TableCell className="text-right">${console.boughtPrice.toFixed(2)}</TableCell>
                     <TableCell className="text-right font-semibold text-primary">
                       ${console.averageMarketPrice.toFixed(2)}

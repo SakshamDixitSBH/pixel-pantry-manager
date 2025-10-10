@@ -106,7 +106,6 @@ const Games = () => {
                   <TableHead className="min-w-[150px]">Console</TableHead>
                   <TableHead className="min-w-[100px]">Platform</TableHead>
                   <TableHead className="min-w-[100px]">Condition</TableHead>
-                  <TableHead className="min-w-[80px]">Year</TableHead>
                   <TableHead className="text-right min-w-[100px]">Bought</TableHead>
                   <TableHead className="text-right min-w-[100px]">Market</TableHead>
                   <TableHead className="text-right min-w-[100px]">Target</TableHead>
@@ -140,7 +139,6 @@ const Games = () => {
                         {game.condition}
                       </Badge>
                     </TableCell>
-                    <TableCell>{game.releaseYear}</TableCell>
                     <TableCell className="text-right">${game.boughtPrice.toFixed(2)}</TableCell>
                     <TableCell className="text-right font-semibold text-primary">
                       ${game.averageMarketPrice.toFixed(2)}
