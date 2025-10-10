@@ -101,10 +101,10 @@ const Accessories = () => {
               <TableHeader>
                 <TableRow className="bg-muted/50">
                   <TableHead className="min-w-[80px]">Photo</TableHead>
-                  <TableHead className="min-w-[150px]">Name</TableHead>
+                  <TableHead className="min-w-[180px]">Name</TableHead>
                   <TableHead className="min-w-[120px]">Type</TableHead>
+                  <TableHead className="min-w-[120px]">Brand</TableHead>
                   <TableHead className="min-w-[150px]">Console</TableHead>
-                  <TableHead className="min-w-[100px]">Model</TableHead>
                   <TableHead className="min-w-[100px]">Color</TableHead>
                   <TableHead className="min-w-[100px]">Condition</TableHead>
                   <TableHead className="text-right min-w-[100px]">Bought</TableHead>
@@ -133,8 +133,8 @@ const Accessories = () => {
                     <TableCell>
                       <Badge variant="outline">{accessory.type}</Badge>
                     </TableCell>
+                    <TableCell>{accessory.brand}</TableCell>
                     <TableCell>{accessory.consoleName}</TableCell>
-                    <TableCell>{accessory.model}</TableCell>
                     <TableCell>{accessory.color}</TableCell>
                     <TableCell>
                       <Badge className={getConditionColor(accessory.condition)}>

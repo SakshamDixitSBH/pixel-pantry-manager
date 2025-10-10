@@ -33,7 +33,7 @@ const Games = () => {
 
   const filteredGames = games.filter((game) =>
     game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    game.genre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    game.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
     game.consoleName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -102,7 +102,7 @@ const Games = () => {
                 <TableRow className="bg-muted/50">
                   <TableHead className="min-w-[80px]">Photo</TableHead>
                   <TableHead className="min-w-[180px]">Title</TableHead>
-                  <TableHead className="min-w-[120px]">Genre</TableHead>
+                  <TableHead className="min-w-[120px]">Brand</TableHead>
                   <TableHead className="min-w-[150px]">Console</TableHead>
                   <TableHead className="min-w-[100px]">Platform</TableHead>
                   <TableHead className="min-w-[100px]">Condition</TableHead>
@@ -129,7 +129,7 @@ const Games = () => {
                       </div>
                     </TableCell>
                     <TableCell className="font-semibold">{game.title}</TableCell>
-                    <TableCell>{game.genre}</TableCell>
+                    <TableCell>{game.brand}</TableCell>
                     <TableCell>{game.consoleName}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{game.platform}</Badge>

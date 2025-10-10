@@ -46,6 +46,10 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
               <p className="text-sm text-muted-foreground">Color</p>
               <p className="font-semibold">{console.color}</p>
             </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Condition</p>
+              <Badge className={getConditionColor(console.condition)}>{console.condition}</Badge>
+            </div>
           </div>
         </>
       );
@@ -59,8 +63,8 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
               <p className="font-semibold">{game.title}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Genre</p>
-              <p className="font-semibold">{game.genre}</p>
+              <p className="text-sm text-muted-foreground">Brand</p>
+              <p className="font-semibold">{game.brand}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Console</p>
@@ -91,12 +95,12 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
               <Badge variant="outline">{accessory.type}</Badge>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Console</p>
-              <p className="font-semibold">{accessory.consoleName}</p>
+              <p className="text-sm text-muted-foreground">Brand</p>
+              <p className="font-semibold">{accessory.brand}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Model</p>
-              <p className="font-semibold">{accessory.model}</p>
+              <p className="text-sm text-muted-foreground">Console</p>
+              <p className="font-semibold">{accessory.consoleName}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Color</p>

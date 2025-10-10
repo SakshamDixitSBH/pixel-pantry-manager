@@ -85,6 +85,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
           brand: formData.get("brand") as string,
           version: formData.get("version") as ConsoleVersion,
           color: formData.get("color") as string,
+          condition: formData.get("condition") as Condition,
         } as Console,
         photoFiles,
       );
@@ -93,7 +94,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
         {
           ...baseItem,
           title: formData.get("title") as string,
-          genre: formData.get("genre") as string,
+          brand: formData.get("brand") as string,
           condition: formData.get("condition") as Condition,
           consoleName: formData.get("consoleName") as ConsoleName,
           platform: formData.get("platform") as Platform,
@@ -106,8 +107,8 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
           ...baseItem,
           name: formData.get("name") as string,
           type: formData.get("accessoryType") as AccessoryType,
+          brand: formData.get("brand") as string,
           color: formData.get("color") as string,
-          model: formData.get("model") as string,
           condition: formData.get("condition") as Condition,
           consoleName: formData.get("consoleName") as ConsoleName,
         } as Accessory,
@@ -249,6 +250,21 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                       </SelectContent>
                     </Select>
                   </div>
+                  <div>
+                    <Label htmlFor="condition">Condition</Label>
+                    <Select name="condition" defaultValue={item ? (item as Console).condition : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select condition" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(Condition).map((condition) => (
+                          <SelectItem key={condition} value={condition}>
+                            {condition}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </>
               )}
 
@@ -265,14 +281,19 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                     />
                   </div>
                   <div>
-                    <Label htmlFor="genre">Genre</Label>
-                    <Input
-                      id="genre"
-                      name="genre"
-                      defaultValue={item ? (item as Game).genre : ""}
-                      className="h-11"
-                      required
-                    />
+                    <Label htmlFor="brand">Brand</Label>
+                    <Select name="brand" defaultValue={item ? (item as Game).brand : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select brand" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(Brands).map((brand) => (
+                          <SelectItem key={brand} value={brand}>
+                            {brand}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div>
                     <Label htmlFor="consoleName">Console</Label>
@@ -350,6 +371,21 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                     </Select>
                   </div>
                   <div>
+                    <Label htmlFor="brand">Brand</Label>
+                    <Select name="brand" defaultValue={item ? (item as Accessory).brand : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select brand" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(Brands).map((brand) => (
+                          <SelectItem key={brand} value={brand}>
+                            {brand}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
                     <Label htmlFor="consoleName">Console</Label>
                     <Select
                       name="consoleName"
@@ -367,16 +403,6 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="model">Model</Label>
-                    <Input
-                      id="model"
-                      name="model"
-                      defaultValue={item ? (item as Accessory).model : ""}
-                      className="h-11"
-                      required
-                    />
                   </div>
                   <div>
                     <Label htmlFor="color">Color</Label>

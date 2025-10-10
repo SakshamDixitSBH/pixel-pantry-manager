@@ -36,7 +36,7 @@ const Dashboard = () => {
   const recentItems = [
     ...consoles.map((c) => ({ ...c, type: "Console" as const })),
     ...games.map((g) => ({ ...g, type: "Game" as const, name: g.title })),
-    ...accessories.map((a) => ({ ...a, type: "Accessory" as const })),
+    ...accessories.map((a) => ({ ...a, type: "Accessory" as const, accessoryType: a.type })),
   ]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 6);
@@ -101,8 +101,8 @@ const Dashboard = () => {
                     <p className="font-semibold text-foreground mb-1">{item.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {item.type === "Console" && `${item.brand} ${item.version}`}
-                      {item.type === "Game" && item.genre}
-                      {item.type === "Accessory" && item.type}
+                      {item.type === "Game" && item.brand}
+                      {item.type === "Accessory" && item.accessoryType}
                     </p>
                   </div>
                   <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30">

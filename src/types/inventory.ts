@@ -166,6 +166,7 @@ export interface Console {
   brand: string;
   version: ConsoleVersion;
   color: string;
+  condition: Condition;
   boughtPrice: number;
   averageMarketPrice: number;
   targetSellingPrice: number;
@@ -178,7 +179,7 @@ export interface Game {
   id: string;
   sku: string;
   title: string;
-  genre: string;
+  brand: string;
   condition: Condition;
   boughtPrice: number;
   averageMarketPrice: number;
@@ -195,8 +196,8 @@ export interface Accessory {
   sku: string;
   name: string;
   type: AccessoryType;
+  brand: string;
   color: string;
-  model: string;
   condition: Condition;
   boughtPrice: number;
   averageMarketPrice: number;
