@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import { Gamepad2, Package, Wrench, LayoutDashboard, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface LayoutProps {
   children: ReactNode;
@@ -21,14 +22,17 @@ const Layout = ({ children }: LayoutProps) => {
       {/* Sidebar */}
       <aside className="w-64 border-r border-border bg-sidebar flex flex-col">
         <div className="p-6 border-b border-sidebar-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <Gamepad2 className="w-6 h-6 text-primary-foreground" />
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
+                <Gamepad2 className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-sidebar-foreground">Retro Inventory</h1>
+                <p className="text-xs text-muted-foreground">Game Collection</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-lg font-bold text-sidebar-foreground">Retro Inventory</h1>
-              <p className="text-xs text-muted-foreground">Game Collection</p>
-            </div>
+            <ThemeToggle />
           </div>
         </div>
 
