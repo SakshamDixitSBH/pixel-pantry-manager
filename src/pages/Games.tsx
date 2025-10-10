@@ -56,8 +56,8 @@ const Games = () => {
     toast.success("Game deleted successfully");
   };
 
-  const handleSave = async (item: Omit<Game, "photos">, photoFiles: File[]) => {
-    await inventoryApi.saveGame(item, photoFiles);
+  const handleSave = async (item: Omit<Game, "photos">, photoBase64: string[]) => {
+    await inventoryApi.saveGame(item, photoBase64);
     setGames(inventoryApi.getGames());
     toast.success(editingItem ? "Game updated successfully" : "Game added successfully");
   };

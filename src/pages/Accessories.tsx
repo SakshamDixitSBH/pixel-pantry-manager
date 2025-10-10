@@ -56,8 +56,8 @@ const Accessories = () => {
     toast.success("Accessory deleted successfully");
   };
 
-  const handleSave = async (item: Omit<Accessory, "photos">, photoFiles: File[]) => {
-    await inventoryApi.saveAccessory(item, photoFiles);
+  const handleSave = async (item: Omit<Accessory, "photos">, photoBase64: string[]) => {
+    await inventoryApi.saveAccessory(item, photoBase64);
     setAccessories(inventoryApi.getAccessories());
     toast.success(editingItem ? "Accessory updated successfully" : "Accessory added successfully");
   };

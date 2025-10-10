@@ -56,8 +56,8 @@ const Consoles = () => {
     toast.success("Console deleted successfully");
   };
 
-  const handleSave = async (item: Omit<Console, "photos">, photoFiles: File[]) => {
-    await inventoryApi.saveConsole(item, photoFiles);
+  const handleSave = async (item: Omit<Console, "photos">, photoBase64: string[]) => {
+    await inventoryApi.saveConsole(item, photoBase64);
     setConsoles(inventoryApi.getConsoles());
     toast.success(editingItem ? "Console updated successfully" : "Console added successfully");
   };

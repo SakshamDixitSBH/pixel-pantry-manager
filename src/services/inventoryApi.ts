@@ -6,31 +6,19 @@ const STORAGE_KEYS = {
   accessories: "inventory_accessories",
 };
 
-// Simulate multipart file upload
-const createFormData = (item: Console | Game | Accessory, photos: File[]): FormData => {
+// Simulate multipart file upload with base64 images
+const createFormData = (item: Console | Game | Accessory, photoBase64: string[]): FormData => {
   const formData = new FormData();
   
   // Add item data as JSON
   formData.append("data", JSON.stringify(item));
   
-  // Add photos as files
-  photos.forEach((photo, index) => {
+  // Add photos as base64 strings
+  photoBase64.forEach((photo, index) => {
     formData.append(`photo_${index}`, photo);
   });
   
   return formData;
-};
-
-// Convert files to base64 for localStorage
-const filesToBase64 = async (files: File[]): Promise<string[]> => {
-  const promises = files.map(file => {
-    return new Promise<string>((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.readAsDataURL(file);
-    });
-  });
-  return Promise.all(promises);
 };
 
 // Generate SKU (simulating backend generation)
@@ -45,11 +33,11 @@ const generateSKU = (type: string, id: string): string => {
 const saveItem = async <T extends Console | Game | Accessory>(
   storageKey: string,
   item: Omit<T, "photos">,
-  photoFiles: File[],
+  photoBase64: string[],
   itemType: string
 ): Promise<T> => {
-  // Simulate multipart upload processing
-  const photos = await filesToBase64(photoFiles);
+  // Photos are already in base64 format
+  const photos = photoBase64;
   
   // Get existing items
   const stored = localStorage.getItem(storageKey);
@@ -105,24 +93,24 @@ const deleteItem = (storageKey: string, id: string): void => {
 // API methods
 export const inventoryApi = {
   // Consoles
-  saveConsole: (console: Omit<Console, "photos" | "sku">, photos: File[]) => 
-    saveItem<Console>(STORAGE_KEYS.consoles, console as Omit<Console, "photos">, photos, "console"),
+  saveConsole: (console: Omit<Console, "photos" | "sku">, photoBase64: string[]) => 
+    saveItem<Console>(STORAGE_KEYS.consoles, console as Omit<Console, "photos">, photoBase64, "console"),
   
   getConsoles: () => getItems<Console>(STORAGE_KEYS.consoles),
   
   deleteConsole: (id: string) => deleteItem(STORAGE_KEYS.consoles, id),
   
   // Games
-  saveGame: (game: Omit<Game, "photos" | "sku">, photos: File[]) => 
-    saveItem<Game>(STORAGE_KEYS.games, game as Omit<Game, "photos">, photos, "game"),
+  saveGame: (game: Omit<Game, "photos" | "sku">, photoBase64: string[]) => 
+    saveItem<Game>(STORAGE_KEYS.games, game as Omit<Game, "photos">, photoBase64, "game"),
   
   getGames: () => getItems<Game>(STORAGE_KEYS.games),
   
   deleteGame: (id: string) => deleteItem(STORAGE_KEYS.games, id),
   
   // Accessories
-  saveAccessory: (accessory: Omit<Accessory, "photos" | "sku">, photos: File[]) => 
-    saveItem<Accessory>(STORAGE_KEYS.accessories, accessory as Omit<Accessory, "photos">, photos, "accessory"),
+  saveAccessory: (accessory: Omit<Accessory, "photos" | "sku">, photoBase64: string[]) => 
+    saveItem<Accessory>(STORAGE_KEYS.accessories, accessory as Omit<Accessory, "photos">, photoBase64, "accessory"),
   
   getAccessories: () => getItems<Accessory>(STORAGE_KEYS.accessories),
   

@@ -19,6 +19,7 @@ import {
 } from "@/types/inventory";
 import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import imageCompression from "browser-image-compression";
 
 const formatBrand = (brand: string) => {
   return brand
@@ -31,39 +32,59 @@ interface AddEditItemModalProps {
   item: Console | Game | Accessory | null;
   isOpen: boolean;
   onClose: () => void;
-  onSave: (item: Omit<Console | Game | Accessory, "photos">, photoFiles: File[]) => void;
+  onSave: (item: Omit<Console | Game | Accessory, "photos">, photoBase64: string[]) => void;
   type: "console" | "game" | "accessory";
 }
 
 export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEditItemModalProps) => {
-  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
+  const [photoBase64, setPhotoBase64] = useState<string[]>(item?.photos || []);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>(item?.photos || []);
   const [commentsLength, setCommentsLength] = useState(item?.comments?.length || 0);
+  const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    if (photoFiles.length + files.length > 5) {
+    if (photoBase64.length + files.length > 5) {
       toast.error("Maximum 5 photos allowed");
       return;
     }
 
+    setIsCompressing(true);
     const newFiles = Array.from(files);
-    setPhotoFiles((prev) => [...prev, ...newFiles]);
 
-    newFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreviews((prev) => [...prev, reader.result as string]);
+    try {
+      const compressionOptions = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
       };
-      reader.readAsDataURL(file);
-    });
+
+      for (const file of newFiles) {
+        const compressedFile = await imageCompression(file, compressionOptions);
+        
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = reader.result as string;
+          setPhotoBase64((prev) => [...prev, base64]);
+          setPhotoPreviews((prev) => [...prev, base64]);
+        };
+        reader.readAsDataURL(compressedFile);
+      }
+      
+      toast.success(`${newFiles.length} image(s) compressed and uploaded`);
+    } catch (error) {
+      console.error("Error compressing images:", error);
+      toast.error("Failed to compress images");
+    } finally {
+      setIsCompressing(false);
+    }
   };
 
   const removePhoto = (index: number) => {
-    setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
+    setPhotoBase64((prev) => prev.filter((_, i) => i !== index));
     setPhotoPreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -90,7 +111,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
           color: formData.get("color") as string,
           condition: formData.get("condition") as Condition,
         } as Console,
-        photoFiles,
+        photoBase64,
       );
     } else if (type === "game") {
       onSave(
@@ -102,7 +123,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
           consoleName: formData.get("consoleName") as ConsoleName,
           platform: formData.get("platform") as Platform,
         } as Game,
-        photoFiles,
+        photoBase64,
       );
     } else {
       onSave(
@@ -115,7 +136,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
           condition: formData.get("condition") as Condition,
           consoleName: formData.get("consoleName") as ConsoleName,
         } as Accessory,
-        photoFiles,
+        photoBase64,
       );
     }
 
@@ -158,12 +179,14 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                   type="button"
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={photoFiles.length >= 5}
+                  disabled={photoBase64.length >= 5 || isCompressing}
                   className="w-full h-24 border-2 border-dashed hover:border-primary transition-colors"
                 >
                   <div className="flex flex-col items-center gap-2">
                     <Upload className="w-6 h-6" />
-                    <span className="text-sm">Upload Photos ({photoFiles.length}/5)</span>
+                    <span className="text-sm">
+                      {isCompressing ? "Compressing..." : `Upload Photos (${photoBase64.length}/5)`}
+                    </span>
                   </div>
                 </Button>
 
