@@ -52,6 +52,7 @@ export enum AccessoryType {
 
 export interface Console {
   id: string;
+  sku: string;
   name: ConsoleName;
   brand: string;
   version: ConsoleVersion;
@@ -66,6 +67,7 @@ export interface Console {
 
 export interface Game {
   id: string;
+  sku: string;
   title: string;
   genre: string;
   releaseYear: number;
@@ -81,6 +83,7 @@ export interface Game {
 
 export interface Accessory {
   id: string;
+  sku: string;
   name: string;
   type: AccessoryType;
   color: string;

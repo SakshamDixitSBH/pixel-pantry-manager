@@ -2,6 +2,7 @@ import { Console, Game, Accessory } from "@/types/inventory";
 
 export const exportConsolesToCSV = (consoles: Console[]) => {
   const headers = [
+    "SKU",
     "Console Name",
     "Brand",
     "Version",
@@ -14,6 +15,7 @@ export const exportConsolesToCSV = (consoles: Console[]) => {
   ];
 
   const rows = consoles.map(console => [
+    console.sku,
     console.name,
     console.brand,
     console.version,
@@ -22,7 +24,7 @@ export const exportConsolesToCSV = (consoles: Console[]) => {
     console.boughtPrice,
     console.averageMarketPrice,
     console.targetSellingPrice,
-    console.createdAt.toLocaleDateString()
+    new Date(console.createdAt).toLocaleDateString()
   ]);
 
   downloadCSV("consoles", headers, rows);
@@ -30,6 +32,7 @@ export const exportConsolesToCSV = (consoles: Console[]) => {
 
 export const exportGamesToCSV = (games: Game[]) => {
   const headers = [
+    "SKU",
     "Title",
     "Genre",
     "Release Year",
@@ -43,6 +46,7 @@ export const exportGamesToCSV = (games: Game[]) => {
   ];
 
   const rows = games.map(game => [
+    game.sku,
     game.title,
     game.genre,
     game.releaseYear,
@@ -52,7 +56,7 @@ export const exportGamesToCSV = (games: Game[]) => {
     game.targetSellingPrice,
     game.consoleName,
     game.platform,
-    game.createdAt.toLocaleDateString()
+    new Date(game.createdAt).toLocaleDateString()
   ]);
 
   downloadCSV("games", headers, rows);
@@ -60,6 +64,7 @@ export const exportGamesToCSV = (games: Game[]) => {
 
 export const exportAccessoriesToCSV = (accessories: Accessory[]) => {
   const headers = [
+    "SKU",
     "Name",
     "Type",
     "Color",
@@ -73,6 +78,7 @@ export const exportAccessoriesToCSV = (accessories: Accessory[]) => {
   ];
 
   const rows = accessories.map(accessory => [
+    accessory.sku,
     accessory.name,
     accessory.type,
     accessory.color,
@@ -82,7 +88,7 @@ export const exportAccessoriesToCSV = (accessories: Accessory[]) => {
     accessory.averageMarketPrice,
     accessory.targetSellingPrice,
     accessory.consoleName,
-    accessory.createdAt.toLocaleDateString()
+    new Date(accessory.createdAt).toLocaleDateString()
   ]);
 
   downloadCSV("accessories", headers, rows);

@@ -128,6 +128,11 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
         </DialogHeader>
         
         <div className="space-y-6">
+          {/* SKU Section */}
+          <div>
+            <p className="text-sm text-muted-foreground">SKU</p>
+            <p className="font-mono text-sm font-semibold text-primary">{item.sku}</p>
+          </div>
           {/* Photos Section */}
           <div>
             <p className="text-sm text-muted-foreground mb-3">Photos</p>

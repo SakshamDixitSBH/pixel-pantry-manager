@@ -3,6 +3,7 @@ import { Console, Game, Accessory, ConsoleName, ConsoleVersion, Condition, Platf
 export const sampleConsoles: Console[] = [
   {
     id: "1",
+    sku: "CON-SAMPLE-001",
     name: ConsoleName.PlayStation5,
     brand: "Sony",
     version: ConsoleVersion.Standard,
@@ -16,6 +17,7 @@ export const sampleConsoles: Console[] = [
   },
   {
     id: "2",
+    sku: "CON-SAMPLE-002",
     name: ConsoleName.XboxSeriesX,
     brand: "Microsoft",
     version: ConsoleVersion.Standard,
@@ -29,6 +31,7 @@ export const sampleConsoles: Console[] = [
   },
   {
     id: "3",
+    sku: "CON-SAMPLE-003",
     name: ConsoleName.NintendoSwitch,
     brand: "Nintendo",
     version: ConsoleVersion.Standard,
@@ -42,6 +45,7 @@ export const sampleConsoles: Console[] = [
   },
   {
     id: "4",
+    sku: "CON-SAMPLE-004",
     name: ConsoleName.PlayStation4,
     brand: "Sony",
     version: ConsoleVersion.Pro,
@@ -58,6 +62,7 @@ export const sampleConsoles: Console[] = [
 export const sampleGames: Game[] = [
   {
     id: "1",
+    sku: "GAM-SAMPLE-001",
     title: "The Last of Us Part II",
     genre: "Action-Adventure",
     releaseYear: 2020,
@@ -72,6 +77,7 @@ export const sampleGames: Game[] = [
   },
   {
     id: "2",
+    sku: "GAM-SAMPLE-002",
     title: "Halo Infinite",
     genre: "FPS",
     releaseYear: 2021,
@@ -86,6 +92,7 @@ export const sampleGames: Game[] = [
   },
   {
     id: "3",
+    sku: "GAM-SAMPLE-003",
     title: "The Legend of Zelda: Breath of the Wild",
     genre: "Action-Adventure",
     releaseYear: 2017,
@@ -100,6 +107,7 @@ export const sampleGames: Game[] = [
   },
   {
     id: "4",
+    sku: "GAM-SAMPLE-004",
     title: "God of War",
     genre: "Action-Adventure",
     releaseYear: 2018,
@@ -114,6 +122,7 @@ export const sampleGames: Game[] = [
   },
   {
     id: "5",
+    sku: "GAM-SAMPLE-005",
     title: "Spider-Man: Miles Morales",
     genre: "Action-Adventure",
     releaseYear: 2020,
@@ -131,6 +140,7 @@ export const sampleGames: Game[] = [
 export const sampleAccessories: Accessory[] = [
   {
     id: "1",
+    sku: "ACC-SAMPLE-001",
     name: "DualSense Controller",
     type: AccessoryType.Controller,
     color: "White",
@@ -145,6 +155,7 @@ export const sampleAccessories: Accessory[] = [
   },
   {
     id: "2",
+    sku: "ACC-SAMPLE-002",
     name: "Xbox Wireless Controller",
     type: AccessoryType.Controller,
     color: "Black",
@@ -159,6 +170,7 @@ export const sampleAccessories: Accessory[] = [
   },
   {
     id: "3",
+    sku: "ACC-SAMPLE-003",
     name: "HDMI Cable",
     type: AccessoryType.Cable,
     color: "Black",
@@ -173,6 +185,7 @@ export const sampleAccessories: Accessory[] = [
   },
   {
     id: "4",
+    sku: "ACC-SAMPLE-004",
     name: "Pro Controller",
     type: AccessoryType.Controller,
     color: "Black",

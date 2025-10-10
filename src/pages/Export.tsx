@@ -1,23 +1,35 @@
+import { useEffect, useState } from "react";
 import { Download, Gamepad2, Package, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { sampleConsoles, sampleGames, sampleAccessories } from "@/data/sampleData";
 import { exportConsolesToCSV, exportGamesToCSV, exportAccessoriesToCSV } from "@/utils/exportToCSV";
+import { inventoryApi } from "@/services/inventoryApi";
+import { Console, Game, Accessory } from "@/types/inventory";
 import { toast } from "sonner";
 
 const Export = () => {
+  const [consoles, setConsoles] = useState<Console[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
+  const [accessories, setAccessories] = useState<Accessory[]>([]);
+
+  useEffect(() => {
+    setConsoles(inventoryApi.getConsoles());
+    setGames(inventoryApi.getGames());
+    setAccessories(inventoryApi.getAccessories());
+  }, []);
+
   const handleExportConsoles = () => {
-    exportConsolesToCSV(sampleConsoles);
+    exportConsolesToCSV(consoles);
     toast.success("Consoles exported to CSV successfully!");
   };
 
   const handleExportGames = () => {
-    exportGamesToCSV(sampleGames);
+    exportGamesToCSV(games);
     toast.success("Games exported to CSV successfully!");
   };
 
   const handleExportAccessories = () => {
-    exportAccessoriesToCSV(sampleAccessories);
+    exportAccessoriesToCSV(accessories);
     toast.success("Accessories exported to CSV successfully!");
   };
 
@@ -43,7 +55,7 @@ const Export = () => {
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Total Records:</span>
-                <span className="font-semibold text-foreground">{sampleConsoles.length}</span>
+                <span className="font-semibold text-foreground">{consoles.length}</span>
               </div>
               <Button onClick={handleExportConsoles} className="w-full gap-2">
                 <Download className="w-4 h-4" />
@@ -67,7 +79,7 @@ const Export = () => {
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Total Records:</span>
-                <span className="font-semibold text-foreground">{sampleGames.length}</span>
+                <span className="font-semibold text-foreground">{games.length}</span>
               </div>
               <Button onClick={handleExportGames} className="w-full gap-2">
                 <Download className="w-4 h-4" />
@@ -91,7 +103,7 @@ const Export = () => {
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Total Records:</span>
-                <span className="font-semibold text-foreground">{sampleAccessories.length}</span>
+                <span className="font-semibold text-foreground">{accessories.length}</span>
               </div>
               <Button onClick={handleExportAccessories} className="w-full gap-2">
                 <Download className="w-4 h-4" />

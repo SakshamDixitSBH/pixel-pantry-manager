@@ -126,6 +126,14 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
 
         <div className="overflow-y-auto flex-1 px-1">
           <form onSubmit={handleSubmit} className="space-y-6 py-4">
+            {/* SKU Display - only show when editing */}
+            {item && (
+              <div className="p-4 rounded-lg border bg-muted/10">
+                <Label className="text-sm text-muted-foreground">SKU (Auto-generated)</Label>
+                <p className="mt-1 text-base font-mono font-semibold text-primary">{(item as any).sku}</p>
+              </div>
+            )}
+
             {/* Photos Upload */}
             <div className="p-4 rounded-lg border bg-muted/20">
               <Label className="text-base font-semibold">Photos (Max 5)</Label>

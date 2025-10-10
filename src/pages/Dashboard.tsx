@@ -1,28 +1,40 @@
+import { useEffect, useState } from "react";
 import { Gamepad2, Package, Wrench, TrendingUp } from "lucide-react";
 import StatsCard from "@/components/StatsCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { sampleConsoles, sampleGames, sampleAccessories } from "@/data/sampleData";
 import { getConditionColor } from "@/utils/conditionColors";
+import { inventoryApi } from "@/services/inventoryApi";
+import { Console, Game, Accessory } from "@/types/inventory";
 
 const Dashboard = () => {
-  const totalConsoles = sampleConsoles.length;
-  const totalGames = sampleGames.length;
-  const totalAccessories = sampleAccessories.length;
+  const [consoles, setConsoles] = useState<Console[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
+  const [accessories, setAccessories] = useState<Accessory[]>([]);
+
+  useEffect(() => {
+    setConsoles(inventoryApi.getConsoles());
+    setGames(inventoryApi.getGames());
+    setAccessories(inventoryApi.getAccessories());
+  }, []);
+
+  const totalConsoles = consoles.length;
+  const totalGames = games.length;
+  const totalAccessories = accessories.length;
 
   const totalValue = [
-    ...sampleConsoles.map(c => c.averageMarketPrice),
-    ...sampleGames.map(g => g.averageMarketPrice),
-    ...sampleAccessories.map(a => a.averageMarketPrice),
+    ...consoles.map(c => c.averageMarketPrice),
+    ...games.map(g => g.averageMarketPrice),
+    ...accessories.map(a => a.averageMarketPrice),
   ].reduce((sum, price) => sum + price, 0);
 
   // Get recent items (sorted by createdAt, take last 6)
   const recentItems = [
-    ...sampleConsoles.map(c => ({ ...c, type: "Console" as const })),
-    ...sampleGames.map(g => ({ ...g, type: "Game" as const, name: g.title })),
-    ...sampleAccessories.map(a => ({ ...a, type: "Accessory" as const })),
+    ...consoles.map(c => ({ ...c, type: "Console" as const })),
+    ...games.map(g => ({ ...g, type: "Game" as const, name: g.title })),
+    ...accessories.map(a => ({ ...a, type: "Accessory" as const })),
   ]
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 6);
 
   return (
