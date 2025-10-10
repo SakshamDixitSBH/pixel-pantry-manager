@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Console,
   Game,
@@ -75,6 +76,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
       averageMarketPrice: parseFloat(formData.get("averageMarketPrice") as string),
       targetSellingPrice: parseFloat(formData.get("targetSellingPrice") as string),
       createdAt: item?.createdAt || new Date(),
+      comments: formData.get("comments") as string || "",
     };
 
     if (type === "console") {
@@ -473,6 +475,17 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                   required
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="comments">Comments</Label>
+              <Textarea 
+                id="comments" 
+                name="comments" 
+                placeholder="Add any additional notes or comments..."
+                defaultValue={item?.comments}
+                rows={4}
+              />
             </div>
 
             <DialogFooter className="pt-4 border-t mt-6 gap-2">

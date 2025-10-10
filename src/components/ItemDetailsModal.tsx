@@ -167,19 +167,28 @@ export const ItemDetailsModal = ({ item, isOpen, onClose, type }: ItemDetailsMod
           {/* Pricing Section */}
           <div>
             <p className="text-sm text-muted-foreground mb-3">Pricing</p>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Bought Price</p>
-                <p className="font-semibold">${item.boughtPrice.toFixed(2)}</p>
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Bought Price</p>
+                  <p className="text-lg font-semibold">${item.boughtPrice?.toFixed(2) || "0.00"}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Market Price</p>
+                  <p className="text-lg font-semibold">${item.averageMarketPrice?.toFixed(2) || "0.00"}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Target Price</p>
+                  <p className="text-lg font-semibold">${item.targetSellingPrice?.toFixed(2) || "0.00"}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Market Price</p>
-                <p className="font-semibold text-primary">${item.averageMarketPrice.toFixed(2)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Target Price</p>
-                <p className="font-semibold">${item.targetSellingPrice.toFixed(2)}</p>
-              </div>
+              
+              {item.comments && (
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-2">Comments</p>
+                  <p className="text-sm whitespace-pre-wrap">{item.comments}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

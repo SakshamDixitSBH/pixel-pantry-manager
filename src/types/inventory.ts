@@ -173,6 +173,7 @@ export interface Console {
   photos: string[];
   createdAt: Date;
   updatedAt: Date;
+  comments?: string;
 }
 
 export interface Game {
@@ -189,6 +190,7 @@ export interface Game {
   photos: string[];
   createdAt: Date;
   updatedAt: Date;
+  comments?: string;
 }
 
 export interface Accessory {
@@ -206,4 +208,5 @@ export interface Accessory {
   photos: string[];
   createdAt: Date;
   updatedAt: Date;
+  comments?: string;
 }
