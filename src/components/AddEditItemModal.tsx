@@ -1,9 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Console,
@@ -14,19 +12,13 @@ import {
   Condition,
   Platform,
   AccessoryType,
-  Color,
-  Brands,
 } from "@/types/inventory";
-import { X, Upload, Image as ImageIcon } from "lucide-react";
-import { toast } from "sonner";
-import imageCompression from "browser-image-compression";
-
-const formatBrand = (brand: string) => {
-  return brand
-    .split("_")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-};
+import { useImageCompression } from "@/hooks/useImageCompression";
+import { PhotoUploadSection } from "./inventory/PhotoUploadSection";
+import { ConsoleFormFields } from "./inventory/form-fields/ConsoleFormFields";
+import { GameFormFields } from "./inventory/form-fields/GameFormFields";
+import { AccessoryFormFields } from "./inventory/form-fields/AccessoryFormFields";
+import { PriceFields } from "./inventory/PriceFields";
 
 interface AddEditItemModalProps {
   item: Console | Game | Accessory | null;
@@ -37,56 +29,16 @@ interface AddEditItemModalProps {
 }
 
 export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEditItemModalProps) => {
-  const [photoBase64, setPhotoBase64] = useState<string[]>(item?.photos || []);
-  const [photoPreviews, setPhotoPreviews] = useState<string[]>(item?.photos || []);
   const [commentsLength, setCommentsLength] = useState(item?.comments?.length || 0);
-  const [isCompressing, setIsCompressing] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    if (photoBase64.length + files.length > 5) {
-      toast.error("Maximum 5 photos allowed");
-      return;
-    }
-
-    setIsCompressing(true);
-    const newFiles = Array.from(files);
-
-    try {
-      const compressionOptions = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-      };
-
-      for (const file of newFiles) {
-        const compressedFile = await imageCompression(file, compressionOptions);
-        
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64 = reader.result as string;
-          setPhotoBase64((prev) => [...prev, base64]);
-          setPhotoPreviews((prev) => [...prev, base64]);
-        };
-        reader.readAsDataURL(compressedFile);
-      }
-      
-      toast.success(`${newFiles.length} image(s) compressed and uploaded`);
-    } catch (error) {
-      console.error("Error compressing images:", error);
-      toast.error("Failed to compress images");
-    } finally {
-      setIsCompressing(false);
-    }
-  };
-
-  const removePhoto = (index: number) => {
-    setPhotoBase64((prev) => prev.filter((_, i) => i !== index));
-    setPhotoPreviews((prev) => prev.filter((_, i) => i !== index));
-  };
+  
+  const {
+    photoBase64,
+    photoPreviews,
+    isCompressing,
+    fileInputRef,
+    handlePhotoUpload,
+    removePhoto,
+  } = useImageCompression(item?.photos || [], 5);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -163,366 +115,54 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
             )}
 
             {/* Photos Upload */}
-            <div className="p-4 rounded-lg border bg-muted/20">
-              <Label className="text-base font-semibold">Photos (Max 5)</Label>
-              <div className="mt-3 space-y-3">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                />
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={photoBase64.length >= 5 || isCompressing}
-                  className="w-full h-24 border-2 border-dashed hover:border-primary transition-colors"
-                >
-                  <div className="flex flex-col items-center gap-2">
-                    <Upload className="w-6 h-6" />
-                    <span className="text-sm">
-                      {isCompressing ? "Compressing..." : `Upload Photos (${photoBase64.length}/5)`}
-                    </span>
-                  </div>
-                </Button>
-
-                {photoPreviews.length > 0 && (
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                    {photoPreviews.map((photo, index) => (
-                      <div
-                        key={index}
-                        className="relative aspect-square rounded-lg border-2 overflow-hidden group hover:border-primary transition-colors"
-                      >
-                        <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => removePhoto(index)}
-                          className="absolute top-2 right-2 p-1.5 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hover:scale-110"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+            <PhotoUploadSection
+              photoBase64={photoBase64}
+              photoPreviews={photoPreviews}
+              isCompressing={isCompressing}
+              fileInputRef={fileInputRef}
+              onPhotoUpload={handlePhotoUpload}
+              onRemovePhoto={removePhoto}
+            />
 
             {/* Dynamic Form Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {type === "console" && (
-                <>
-                  <div>
-                    <Label htmlFor="name">Console Name</Label>
-                    <Select name="name" defaultValue={item ? (item as Console).name : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select console" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(ConsoleName).map((name) => (
-                          <SelectItem key={name} value={name}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="brand">Brand</Label>
-                    <Select name="brand" defaultValue={item ? (item as Console).brand : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select brand" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(Brands).map((brand) => (
-                          <SelectItem key={brand} value={brand}>
-                            {brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="version">Version</Label>
-                    <Select name="version" defaultValue={item ? (item as Console).version : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select version" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(ConsoleVersion).map((version) => (
-                          <SelectItem key={version} value={version}>
-                            {version}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="color">Color</Label>
-                    <Select name="color" defaultValue={item ? (item as Console).color : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select color" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover max-h-[300px]">
-                        {Object.values(Color).map((color) => (
-                          <SelectItem key={color} value={color}>
-                            {color}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="condition">Condition</Label>
-                    <Select name="condition" defaultValue={item ? (item as Console).condition : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select condition" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(Condition).map((condition) => (
-                          <SelectItem key={condition} value={condition}>
-                            {condition}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </>
-              )}
-
-              {type === "game" && (
-                <>
-                  <div>
-                    <Label htmlFor="title">Title</Label>
-                    <Input
-                      id="title"
-                      name="title"
-                      defaultValue={item ? (item as Game).title : ""}
-                      className="h-11"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="brand">Brand</Label>
-                    <Select name="brand" defaultValue={item ? (item as Game).brand : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select brand" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(Brands).map((brand) => (
-                          <SelectItem key={brand} value={brand}>
-                            {brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="consoleName">Console</Label>
-                    <Select name="consoleName" defaultValue={item ? (item as Game).consoleName : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select console" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(ConsoleName).map((name) => (
-                          <SelectItem key={name} value={name}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="platform">Platform</Label>
-                    <Select name="platform" defaultValue={item ? (item as Game).platform : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select platform" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(Platform).map((platform) => (
-                          <SelectItem key={platform} value={platform}>
-                            {platform}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="condition">Condition</Label>
-                    <Select name="condition" defaultValue={item ? (item as Game).condition : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select condition" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(Condition).map((condition) => (
-                          <SelectItem key={condition} value={condition}>
-                            {condition}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </>
-              )}
-
-              {type === "accessory" && (
-                <>
-                  <div>
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      defaultValue={item ? (item as Accessory).name : ""}
-                      className="h-11"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="accessoryType">Type</Label>
-                    <Select name="accessoryType" defaultValue={item ? (item as Accessory).type : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(AccessoryType).map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="brand">Brand</Label>
-                    <Select name="brand" defaultValue={item ? (item as Accessory).brand : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select brand" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(Brands).map((brand) => (
-                          <SelectItem key={brand} value={brand}>
-                            {brand}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="consoleName">Console</Label>
-                    <Select
-                      name="consoleName"
-                      defaultValue={item ? (item as Accessory).consoleName : undefined}
-                      required
-                    >
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select console" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(ConsoleName).map((name) => (
-                          <SelectItem key={name} value={name}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="color">Color</Label>
-                    <Select name="color" defaultValue={item ? (item as Accessory).color : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select color" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover max-h-[300px]">
-                        {Object.values(Color).map((color) => (
-                          <SelectItem key={color} value={color}>
-                            {color}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="condition">Condition</Label>
-                    <Select name="condition" defaultValue={item ? (item as Accessory).condition : undefined} required>
-                      <SelectTrigger className="h-11">
-                        <SelectValue placeholder="Select condition" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        {Object.values(Condition).map((condition) => (
-                          <SelectItem key={condition} value={condition}>
-                            {condition}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </>
-              )}
-
-              <div>
-                <Label htmlFor="boughtPrice">Bought Price</Label>
-                <Input
-                  id="boughtPrice"
-                  name="boughtPrice"
-                  type="number"
-                  step="0.01"
-                  defaultValue={item?.boughtPrice || ""}
-                  className="h-11"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="averageMarketPrice">Market Price</Label>
-                <Input
-                  id="averageMarketPrice"
-                  name="averageMarketPrice"
-                  type="number"
-                  step="0.01"
-                  defaultValue={item?.averageMarketPrice || ""}
-                  className="h-11"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="targetSellingPrice">Target Price</Label>
-                <Input
-                  id="targetSellingPrice"
-                  name="targetSellingPrice"
-                  type="number"
-                  step="0.01"
-                  defaultValue={item?.targetSellingPrice || ""}
-                  className="h-11"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="comments">Comments</Label>
-                <span className="text-xs text-muted-foreground">{commentsLength}/500</span>
-              </div>
-              <Textarea 
-                id="comments" 
-                name="comments" 
-                placeholder="Add any additional notes or comments..."
-                defaultValue={item?.comments}
-                maxLength={500}
-                rows={4}
-                onChange={(e) => setCommentsLength(e.target.value.length)}
+              {type === "console" && <ConsoleFormFields item={item as Console} />}
+              {type === "game" && <GameFormFields item={item as Game} />}
+              {type === "accessory" && <AccessoryFormFields item={item as Accessory} />}
+              
+              {/* Pricing Fields */}
+              <PriceFields
+                boughtPrice={item?.boughtPrice}
+                averageMarketPrice={item?.averageMarketPrice}
+                targetSellingPrice={item?.targetSellingPrice}
               />
             </div>
 
-            <DialogFooter className="pt-4 border-t mt-6 gap-2">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1 sm:flex-none">
+            {/* Comments */}
+            <div className="p-4 rounded-lg border bg-muted/20">
+              <Label htmlFor="comments" className="text-base font-semibold">
+                Comments (Optional)
+              </Label>
+              <Textarea
+                id="comments"
+                name="comments"
+                defaultValue={item?.comments || ""}
+                placeholder="Add any additional notes or comments..."
+                className="mt-2 min-h-[100px] resize-none"
+                maxLength={500}
+                onChange={(e) => setCommentsLength(e.target.value.length)}
+              />
+              <p className="mt-2 text-xs text-muted-foreground text-right">
+                {commentsLength}/500
+              </p>
+            </div>
+
+            <DialogFooter className="sticky bottom-0 bg-background pt-4 border-t">
+              <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="submit" className="flex-1 sm:flex-none">
-                Save Item
+              <Button type="submit">
+                {item ? "Update" : "Add"} {type === "console" ? "Console" : type === "game" ? "Game" : "Accessory"}
               </Button>
             </DialogFooter>
           </form>

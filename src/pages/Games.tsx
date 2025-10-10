@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
+import { Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,20 +14,27 @@ import { Game } from "@/types/inventory";
 import { getConditionColor } from "@/utils/conditionColors";
 import { ItemDetailsModal } from "@/components/ItemDetailsModal";
 import { AddEditItemModal } from "@/components/AddEditItemModal";
-import { toast } from "sonner";
-import { inventoryApi } from "@/services/inventoryApi";
+import { useInventoryManager } from "@/hooks/useInventoryManager";
+import { PageHeader } from "@/components/inventory/PageHeader";
+import { SearchBar } from "@/components/inventory/SearchBar";
 
 const Games = () => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState<Game | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [isAddEditOpen, setIsAddEditOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Game | null>(null);
-
-  useEffect(() => {
-    setGames(inventoryApi.getGames());
-  }, []);
+  const {
+    items: games,
+    searchQuery,
+    setSearchQuery,
+    selectedItem,
+    isDetailsOpen,
+    isAddEditOpen,
+    editingItem,
+    handleAdd,
+    handleEdit,
+    handleDelete,
+    handleSave,
+    handleRowClick,
+    closeDetailsModal,
+    closeAddEditModal,
+  } = useInventoryManager<Game>("game");
 
   const filteredGames = games.filter((game) =>
     game.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -37,62 +42,24 @@ const Games = () => {
     game.consoleName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAdd = () => {
-    setEditingItem(null);
-    setIsAddEditOpen(true);
-  };
-
-  const handleEdit = (id: string) => {
-    const item = games.find((g) => g.id === id);
-    if (item) {
-      setEditingItem(item);
-      setIsAddEditOpen(true);
-    }
-  };
-
-  const handleDelete = (id: string) => {
-    inventoryApi.deleteGame(id);
-    setGames(inventoryApi.getGames());
-    toast.success("Game deleted successfully");
-  };
-
-  const handleSave = async (item: Omit<Game, "photos">, photoBase64: string[]) => {
-    await inventoryApi.saveGame(item, photoBase64);
-    setGames(inventoryApi.getGames());
-    toast.success(editingItem ? "Game updated successfully" : "Game added successfully");
-  };
-
-  const handleRowClick = (game: Game) => {
-    setSelectedItem(game);
-    setIsDetailsOpen(true);
-  };
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 lg:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2">Games</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Manage your game collection</p>
-        </div>
-        <Button onClick={handleAdd} className="gap-2 w-full sm:w-auto">
-          <Plus className="w-4 h-4" />
-          Add Game
-        </Button>
-      </div>
+      <PageHeader
+        title="Games"
+        description="Manage your game collection"
+        buttonText="Add Game"
+        onAddClick={handleAdd}
+      />
 
       <Card>
         <CardHeader>
           <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <span className="text-lg sm:text-xl">All Games</span>
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search games..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search games..."
+            />
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -175,14 +142,14 @@ const Games = () => {
       <ItemDetailsModal
         item={selectedItem}
         isOpen={isDetailsOpen}
-        onClose={() => setIsDetailsOpen(false)}
+        onClose={closeDetailsModal}
         type="game"
       />
 
       <AddEditItemModal
         item={editingItem}
         isOpen={isAddEditOpen}
-        onClose={() => setIsAddEditOpen(false)}
+        onClose={closeAddEditModal}
         onSave={handleSave}
         type="game"
       />

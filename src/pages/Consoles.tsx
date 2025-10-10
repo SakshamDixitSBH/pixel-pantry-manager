@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
+import { Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,20 +14,27 @@ import { Console } from "@/types/inventory";
 import { getVersionBadgeColor } from "@/utils/conditionColors";
 import { ItemDetailsModal } from "@/components/ItemDetailsModal";
 import { AddEditItemModal } from "@/components/AddEditItemModal";
-import { toast } from "sonner";
-import { inventoryApi } from "@/services/inventoryApi";
+import { useInventoryManager } from "@/hooks/useInventoryManager";
+import { PageHeader } from "@/components/inventory/PageHeader";
+import { SearchBar } from "@/components/inventory/SearchBar";
 
 const Consoles = () => {
-  const [consoles, setConsoles] = useState<Console[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState<Console | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [isAddEditOpen, setIsAddEditOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Console | null>(null);
-
-  useEffect(() => {
-    setConsoles(inventoryApi.getConsoles());
-  }, []);
+  const {
+    items: consoles,
+    searchQuery,
+    setSearchQuery,
+    selectedItem,
+    isDetailsOpen,
+    isAddEditOpen,
+    editingItem,
+    handleAdd,
+    handleEdit,
+    handleDelete,
+    handleSave,
+    handleRowClick,
+    closeDetailsModal,
+    closeAddEditModal,
+  } = useInventoryManager<Console>("console");
 
   const filteredConsoles = consoles.filter((console) =>
     console.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -37,62 +42,24 @@ const Consoles = () => {
     console.color.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAdd = () => {
-    setEditingItem(null);
-    setIsAddEditOpen(true);
-  };
-
-  const handleEdit = (id: string) => {
-    const item = consoles.find((c) => c.id === id);
-    if (item) {
-      setEditingItem(item);
-      setIsAddEditOpen(true);
-    }
-  };
-
-  const handleDelete = (id: string) => {
-    inventoryApi.deleteConsole(id);
-    setConsoles(inventoryApi.getConsoles());
-    toast.success("Console deleted successfully");
-  };
-
-  const handleSave = async (item: Omit<Console, "photos">, photoBase64: string[]) => {
-    await inventoryApi.saveConsole(item, photoBase64);
-    setConsoles(inventoryApi.getConsoles());
-    toast.success(editingItem ? "Console updated successfully" : "Console added successfully");
-  };
-
-  const handleRowClick = (console: Console) => {
-    setSelectedItem(console);
-    setIsDetailsOpen(true);
-  };
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 lg:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2">Consoles</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Manage your gaming consoles</p>
-        </div>
-        <Button onClick={handleAdd} className="gap-2 w-full sm:w-auto">
-          <Plus className="w-4 h-4" />
-          Add Console
-        </Button>
-      </div>
+      <PageHeader
+        title="Consoles"
+        description="Manage your gaming consoles"
+        buttonText="Add Console"
+        onAddClick={handleAdd}
+      />
 
       <Card>
         <CardHeader>
           <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <span className="text-lg sm:text-xl">All Consoles</span>
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search consoles..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search consoles..."
+            />
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -171,14 +138,14 @@ const Consoles = () => {
       <ItemDetailsModal
         item={selectedItem}
         isOpen={isDetailsOpen}
-        onClose={() => setIsDetailsOpen(false)}
+        onClose={closeDetailsModal}
         type="console"
       />
 
       <AddEditItemModal
         item={editingItem}
         isOpen={isAddEditOpen}
-        onClose={() => setIsAddEditOpen(false)}
+        onClose={closeAddEditModal}
         onSave={handleSave}
         type="console"
       />

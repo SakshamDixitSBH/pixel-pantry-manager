@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { Plus, Search, Pencil, Trash2, Image as ImageIcon } from "lucide-react";
+import { Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -16,20 +14,27 @@ import { Accessory } from "@/types/inventory";
 import { getConditionColor } from "@/utils/conditionColors";
 import { ItemDetailsModal } from "@/components/ItemDetailsModal";
 import { AddEditItemModal } from "@/components/AddEditItemModal";
-import { toast } from "sonner";
-import { inventoryApi } from "@/services/inventoryApi";
+import { useInventoryManager } from "@/hooks/useInventoryManager";
+import { PageHeader } from "@/components/inventory/PageHeader";
+import { SearchBar } from "@/components/inventory/SearchBar";
 
 const Accessories = () => {
-  const [accessories, setAccessories] = useState<Accessory[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedItem, setSelectedItem] = useState<Accessory | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [isAddEditOpen, setIsAddEditOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<Accessory | null>(null);
-
-  useEffect(() => {
-    setAccessories(inventoryApi.getAccessories());
-  }, []);
+  const {
+    items: accessories,
+    searchQuery,
+    setSearchQuery,
+    selectedItem,
+    isDetailsOpen,
+    isAddEditOpen,
+    editingItem,
+    handleAdd,
+    handleEdit,
+    handleDelete,
+    handleSave,
+    handleRowClick,
+    closeDetailsModal,
+    closeAddEditModal,
+  } = useInventoryManager<Accessory>("accessory");
 
   const filteredAccessories = accessories.filter((accessory) =>
     accessory.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -37,62 +42,24 @@ const Accessories = () => {
     accessory.consoleName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleAdd = () => {
-    setEditingItem(null);
-    setIsAddEditOpen(true);
-  };
-
-  const handleEdit = (id: string) => {
-    const item = accessories.find((a) => a.id === id);
-    if (item) {
-      setEditingItem(item);
-      setIsAddEditOpen(true);
-    }
-  };
-
-  const handleDelete = (id: string) => {
-    inventoryApi.deleteAccessory(id);
-    setAccessories(inventoryApi.getAccessories());
-    toast.success("Accessory deleted successfully");
-  };
-
-  const handleSave = async (item: Omit<Accessory, "photos">, photoBase64: string[]) => {
-    await inventoryApi.saveAccessory(item, photoBase64);
-    setAccessories(inventoryApi.getAccessories());
-    toast.success(editingItem ? "Accessory updated successfully" : "Accessory added successfully");
-  };
-
-  const handleRowClick = (accessory: Accessory) => {
-    setSelectedItem(accessory);
-    setIsDetailsOpen(true);
-  };
-
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 lg:space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2">Accessories</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Manage your gaming accessories</p>
-        </div>
-        <Button onClick={handleAdd} className="gap-2 w-full sm:w-auto">
-          <Plus className="w-4 h-4" />
-          Add Accessory
-        </Button>
-      </div>
+      <PageHeader
+        title="Accessories"
+        description="Manage your gaming accessories"
+        buttonText="Add Accessory"
+        onAddClick={handleAdd}
+      />
 
       <Card>
         <CardHeader>
           <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <span className="text-lg sm:text-xl">All Accessories</span>
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search accessories..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search accessories..."
+            />
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -177,14 +144,14 @@ const Accessories = () => {
       <ItemDetailsModal
         item={selectedItem}
         isOpen={isDetailsOpen}
-        onClose={() => setIsDetailsOpen(false)}
+        onClose={closeDetailsModal}
         type="accessory"
       />
 
       <AddEditItemModal
         item={editingItem}
         isOpen={isAddEditOpen}
-        onClose={() => setIsAddEditOpen(false)}
+        onClose={closeAddEditModal}
         onSave={handleSave}
         type="accessory"
       />
