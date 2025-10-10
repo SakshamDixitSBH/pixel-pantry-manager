@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +38,7 @@ interface AddEditItemModalProps {
 export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEditItemModalProps) => {
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>(item?.photos || []);
+  const [commentsLength, setCommentsLength] = useState(item?.comments?.length || 0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -478,13 +479,18 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="comments">Comments</Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="comments">Comments</Label>
+                <span className="text-xs text-muted-foreground">{commentsLength}/500</span>
+              </div>
               <Textarea 
                 id="comments" 
                 name="comments" 
                 placeholder="Add any additional notes or comments..."
                 defaultValue={item?.comments}
+                maxLength={500}
                 rows={4}
+                onChange={(e) => setCommentsLength(e.target.value.length)}
               />
             </div>
 
