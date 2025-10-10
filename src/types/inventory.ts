@@ -18,6 +18,21 @@ export enum ConsoleName {
   SegaSaturn = "Sega Saturn",
 }
 
+export enum Brands {
+  Nintendo = "Nintendo",
+  Sony = "Sony",
+  Sega = "Sega",
+  Atari = "Atari",
+  Microsoft = "Microsoft",
+  Amiga = "Amiga",
+  Namco = "Namco",
+  ElectronicArts = "Electronic Arts",
+  Ubisoft = "Ubisoft",
+  Rockstar = "Rockstar",
+  Bandai = "Bandai",
+  GameFreak = "Game Freak",
+}
+
 export enum ConsoleVersion {
   Slim = "Slim",
   Pro = "Pro",

@@ -4,32 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Console, Game, Accessory, ConsoleName, ConsoleVersion, Condition, Platform, AccessoryType, Color } from "@/types/inventory";
+import {
+  Console,
+  Game,
+  Accessory,
+  ConsoleName,
+  ConsoleVersion,
+  Condition,
+  Platform,
+  AccessoryType,
+  Color,
+  Brands,
+} from "@/types/inventory";
 import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
-const BRANDS = [
-  "NINTENDO",
-  "SONY", 
-  "SEGA",
-  "ATARI",
-  "MICROSOFT",
-  "AMIGA",
-  "NAMCO",
-  "VICTOR",
-  "SONY_COMPUTER_ENTERTAINMENT",
-  "ELECTRONIC_ARTS",
-  "UBISOFT",
-  "ROCKSTAR",
-  "BANDAI",
-  "GAME_FREAK"
-] as const;
-
 const formatBrand = (brand: string) => {
   return brand
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 };
 
 interface AddEditItemModalProps {
@@ -74,7 +68,7 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    
+
     const baseItem = {
       id: item?.id || Date.now().toString(),
       boughtPrice: parseFloat(formData.get("boughtPrice") as string),
@@ -84,32 +78,41 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
     };
 
     if (type === "console") {
-      onSave({
-        ...baseItem,
-        name: formData.get("name") as ConsoleName,
-        brand: formData.get("brand") as string,
-        version: formData.get("version") as ConsoleVersion,
-        color: formData.get("color") as string,
-      } as Console, photoFiles);
+      onSave(
+        {
+          ...baseItem,
+          name: formData.get("name") as ConsoleName,
+          brand: formData.get("brand") as string,
+          version: formData.get("version") as ConsoleVersion,
+          color: formData.get("color") as string,
+        } as Console,
+        photoFiles,
+      );
     } else if (type === "game") {
-      onSave({
-        ...baseItem,
-        title: formData.get("title") as string,
-        genre: formData.get("genre") as string,
-        condition: formData.get("condition") as Condition,
-        consoleName: formData.get("consoleName") as ConsoleName,
-        platform: formData.get("platform") as Platform,
-      } as Game, photoFiles);
+      onSave(
+        {
+          ...baseItem,
+          title: formData.get("title") as string,
+          genre: formData.get("genre") as string,
+          condition: formData.get("condition") as Condition,
+          consoleName: formData.get("consoleName") as ConsoleName,
+          platform: formData.get("platform") as Platform,
+        } as Game,
+        photoFiles,
+      );
     } else {
-      onSave({
-        ...baseItem,
-        name: formData.get("name") as string,
-        type: formData.get("accessoryType") as AccessoryType,
-        color: formData.get("color") as string,
-        model: formData.get("model") as string,
-        condition: formData.get("condition") as Condition,
-        consoleName: formData.get("consoleName") as ConsoleName,
-      } as Accessory, photoFiles);
+      onSave(
+        {
+          ...baseItem,
+          name: formData.get("name") as string,
+          type: formData.get("accessoryType") as AccessoryType,
+          color: formData.get("color") as string,
+          model: formData.get("model") as string,
+          condition: formData.get("condition") as Condition,
+          consoleName: formData.get("consoleName") as ConsoleName,
+        } as Accessory,
+        photoFiles,
+      );
     }
 
     onClose();
@@ -119,7 +122,9 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden flex flex-col">
         <DialogHeader className="pb-4 border-b">
-          <DialogTitle className="text-2xl font-semibold">{item ? "Edit" : "Add"} {type === "console" ? "Console" : type === "game" ? "Game" : "Accessory"}</DialogTitle>
+          <DialogTitle className="text-2xl font-semibold">
+            {item ? "Edit" : "Add"} {type === "console" ? "Console" : type === "game" ? "Game" : "Accessory"}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="overflow-y-auto flex-1 px-1">
@@ -136,15 +141,15 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
             <div className="p-4 rounded-lg border bg-muted/20">
               <Label className="text-base font-semibold">Photos (Max 5)</Label>
               <div className="mt-3 space-y-3">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handlePhotoUpload}
-                className="hidden"
-              />
-              
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+
                 <Button
                   type="button"
                   variant="outline"
@@ -161,7 +166,10 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 {photoPreviews.length > 0 && (
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                     {photoPreviews.map((photo, index) => (
-                      <div key={index} className="relative aspect-square rounded-lg border-2 overflow-hidden group hover:border-primary transition-colors">
+                      <div
+                        key={index}
+                        className="relative aspect-square rounded-lg border-2 overflow-hidden group hover:border-primary transition-colors"
+                      >
                         <img src={photo} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
                         <button
                           type="button"
@@ -179,197 +187,275 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
 
             {/* Dynamic Form Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {type === "console" && (
-              <>
-                <div>
-                  <Label htmlFor="name">Console Name</Label>
-                  <Select name="name" defaultValue={item ? (item as Console).name : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select console" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {Object.values(ConsoleName).map((name) => (
-                        <SelectItem key={name} value={name}>{name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="brand">Brand</Label>
-                  <Select name="brand" defaultValue={item ? (item as Console).brand : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select brand" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {BRANDS.map((brand) => (
-                        <SelectItem key={brand} value={brand}>{formatBrand(brand)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="version">Version</Label>
-                  <Select name="version" defaultValue={item ? (item as Console).version : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select version" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {Object.values(ConsoleVersion).map((version) => (
-                        <SelectItem key={version} value={version}>{version}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="color">Color</Label>
-                  <Select name="color" defaultValue={item ? (item as Console).color : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select color" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover max-h-[300px]">
-                      {Object.values(Color).map((color) => (
-                        <SelectItem key={color} value={color}>{color}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
+              {type === "console" && (
+                <>
+                  <div>
+                    <Label htmlFor="name">Console Name</Label>
+                    <Select name="name" defaultValue={item ? (item as Console).name : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select console" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(ConsoleName).map((name) => (
+                          <SelectItem key={name} value={name}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="brand">Brand</Label>
+                    <Select name="brand" defaultValue={item ? (item as Console).brand : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select brand" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(Brands).map((brand) => (
+                          <SelectItem key={brand} value={brand}>
+                            {brand}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="version">Version</Label>
+                    <Select name="version" defaultValue={item ? (item as Console).version : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select version" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(ConsoleVersion).map((version) => (
+                          <SelectItem key={version} value={version}>
+                            {version}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="color">Color</Label>
+                    <Select name="color" defaultValue={item ? (item as Console).color : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover max-h-[300px]">
+                        {Object.values(Color).map((color) => (
+                          <SelectItem key={color} value={color}>
+                            {color}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
 
-            {type === "game" && (
-              <>
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input id="title" name="title" defaultValue={item ? (item as Game).title : ""} className="h-11" required />
-                </div>
-                <div>
-                  <Label htmlFor="genre">Genre</Label>
-                  <Input id="genre" name="genre" defaultValue={item ? (item as Game).genre : ""} className="h-11" required />
-                </div>
-                <div>
-                  <Label htmlFor="consoleName">Console</Label>
-                  <Select name="consoleName" defaultValue={item ? (item as Game).consoleName : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select console" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {Object.values(ConsoleName).map((name) => (
-                        <SelectItem key={name} value={name}>{name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="platform">Platform</Label>
-                  <Select name="platform" defaultValue={item ? (item as Game).platform : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select platform" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {Object.values(Platform).map((platform) => (
-                        <SelectItem key={platform} value={platform}>{platform}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="condition">Condition</Label>
-                  <Select name="condition" defaultValue={item ? (item as Game).condition : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select condition" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {Object.values(Condition).map((condition) => (
-                        <SelectItem key={condition} value={condition}>{condition}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
+              {type === "game" && (
+                <>
+                  <div>
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      name="title"
+                      defaultValue={item ? (item as Game).title : ""}
+                      className="h-11"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="genre">Genre</Label>
+                    <Input
+                      id="genre"
+                      name="genre"
+                      defaultValue={item ? (item as Game).genre : ""}
+                      className="h-11"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="consoleName">Console</Label>
+                    <Select name="consoleName" defaultValue={item ? (item as Game).consoleName : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select console" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(ConsoleName).map((name) => (
+                          <SelectItem key={name} value={name}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="platform">Platform</Label>
+                    <Select name="platform" defaultValue={item ? (item as Game).platform : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select platform" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(Platform).map((platform) => (
+                          <SelectItem key={platform} value={platform}>
+                            {platform}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="condition">Condition</Label>
+                    <Select name="condition" defaultValue={item ? (item as Game).condition : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select condition" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(Condition).map((condition) => (
+                          <SelectItem key={condition} value={condition}>
+                            {condition}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
 
-            {type === "accessory" && (
-              <>
-                <div>
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" name="name" defaultValue={item ? (item as Accessory).name : ""} className="h-11" required />
-                </div>
-                <div>
-                  <Label htmlFor="accessoryType">Type</Label>
-                  <Select name="accessoryType" defaultValue={item ? (item as Accessory).type : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select type" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {Object.values(AccessoryType).map((type) => (
-                        <SelectItem key={type} value={type}>{type}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="consoleName">Console</Label>
-                  <Select name="consoleName" defaultValue={item ? (item as Accessory).consoleName : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select console" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {Object.values(ConsoleName).map((name) => (
-                        <SelectItem key={name} value={name}>{name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="model">Model</Label>
-                  <Input id="model" name="model" defaultValue={item ? (item as Accessory).model : ""} className="h-11" required />
-                </div>
-                <div>
-                  <Label htmlFor="color">Color</Label>
-                  <Select name="color" defaultValue={item ? (item as Accessory).color : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select color" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover max-h-[300px]">
-                      {Object.values(Color).map((color) => (
-                        <SelectItem key={color} value={color}>{color}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="condition">Condition</Label>
-                  <Select name="condition" defaultValue={item ? (item as Accessory).condition : undefined} required>
-                    <SelectTrigger className="h-11">
-                      <SelectValue placeholder="Select condition" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-popover">
-                      {Object.values(Condition).map((condition) => (
-                        <SelectItem key={condition} value={condition}>{condition}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
+              {type === "accessory" && (
+                <>
+                  <div>
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      defaultValue={item ? (item as Accessory).name : ""}
+                      className="h-11"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="accessoryType">Type</Label>
+                    <Select name="accessoryType" defaultValue={item ? (item as Accessory).type : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(AccessoryType).map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="consoleName">Console</Label>
+                    <Select
+                      name="consoleName"
+                      defaultValue={item ? (item as Accessory).consoleName : undefined}
+                      required
+                    >
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select console" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(ConsoleName).map((name) => (
+                          <SelectItem key={name} value={name}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="model">Model</Label>
+                    <Input
+                      id="model"
+                      name="model"
+                      defaultValue={item ? (item as Accessory).model : ""}
+                      className="h-11"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="color">Color</Label>
+                    <Select name="color" defaultValue={item ? (item as Accessory).color : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover max-h-[300px]">
+                        {Object.values(Color).map((color) => (
+                          <SelectItem key={color} value={color}>
+                            {color}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="condition">Condition</Label>
+                    <Select name="condition" defaultValue={item ? (item as Accessory).condition : undefined} required>
+                      <SelectTrigger className="h-11">
+                        <SelectValue placeholder="Select condition" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover">
+                        {Object.values(Condition).map((condition) => (
+                          <SelectItem key={condition} value={condition}>
+                            {condition}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </>
+              )}
 
-            <div>
-              <Label htmlFor="boughtPrice">Bought Price</Label>
-              <Input id="boughtPrice" name="boughtPrice" type="number" step="0.01" defaultValue={item?.boughtPrice || ""} className="h-11" required />
-            </div>
-            <div>
-              <Label htmlFor="averageMarketPrice">Market Price</Label>
-              <Input id="averageMarketPrice" name="averageMarketPrice" type="number" step="0.01" defaultValue={item?.averageMarketPrice || ""} className="h-11" required />
-            </div>
-            <div>
-              <Label htmlFor="targetSellingPrice">Target Price</Label>
-              <Input id="targetSellingPrice" name="targetSellingPrice" type="number" step="0.01" defaultValue={item?.targetSellingPrice || ""} className="h-11" required />
-            </div>
+              <div>
+                <Label htmlFor="boughtPrice">Bought Price</Label>
+                <Input
+                  id="boughtPrice"
+                  name="boughtPrice"
+                  type="number"
+                  step="0.01"
+                  defaultValue={item?.boughtPrice || ""}
+                  className="h-11"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="averageMarketPrice">Market Price</Label>
+                <Input
+                  id="averageMarketPrice"
+                  name="averageMarketPrice"
+                  type="number"
+                  step="0.01"
+                  defaultValue={item?.averageMarketPrice || ""}
+                  className="h-11"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="targetSellingPrice">Target Price</Label>
+                <Input
+                  id="targetSellingPrice"
+                  name="targetSellingPrice"
+                  type="number"
+                  step="0.01"
+                  defaultValue={item?.targetSellingPrice || ""}
+                  className="h-11"
+                  required
+                />
+              </div>
             </div>
 
             <DialogFooter className="pt-4 border-t mt-6 gap-2">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1 sm:flex-none">Cancel</Button>
-              <Button type="submit" className="flex-1 sm:flex-none">Save Item</Button>
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1 sm:flex-none">
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1 sm:flex-none">
+                Save Item
+              </Button>
             </DialogFooter>
           </form>
         </div>
