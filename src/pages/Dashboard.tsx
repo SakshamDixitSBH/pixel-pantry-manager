@@ -98,6 +98,7 @@ const Dashboard = () => {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <p className="font-semibold text-foreground mb-1">{item.name}</p>
+                    <p className="text-xs text-muted-foreground mb-1">SKU: {item.sku}</p>
                     <p className="text-sm text-muted-foreground">
                       {item.type === "Console" && `${item.brand} ${item.version}`}
                       {item.type === "Game" && item.genre}

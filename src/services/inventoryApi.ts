@@ -61,13 +61,26 @@ const saveItem = async <T extends Console | Game | Accessory>(
   let itemWithPhotos: T;
   
   if (index >= 0) {
-    // Update existing item (keep existing SKU)
-    itemWithPhotos = { ...item, photos, sku: items[index].sku } as T;
+    // Update existing item (keep existing SKU and createdAt)
+    itemWithPhotos = { 
+      ...item, 
+      photos, 
+      sku: items[index].sku,
+      createdAt: items[index].createdAt,
+      updatedAt: new Date()
+    } as T;
     items[index] = itemWithPhotos;
   } else {
     // Generate SKU for new item (simulating backend)
     const sku = generateSKU(itemType, item.id);
-    itemWithPhotos = { ...item, photos, sku } as T;
+    const now = new Date();
+    itemWithPhotos = { 
+      ...item, 
+      photos, 
+      sku,
+      createdAt: now,
+      updatedAt: now
+    } as T;
     items.push(itemWithPhotos);
   }
   

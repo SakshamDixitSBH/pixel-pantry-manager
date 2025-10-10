@@ -13,6 +13,7 @@ export const sampleConsoles: Console[] = [
     targetSellingPrice: 599.99,
     photos: [],
     createdAt: new Date("2024-01-15"),
+    updatedAt: new Date("2024-01-15"),
   },
   {
     id: "2",
@@ -26,6 +27,7 @@ export const sampleConsoles: Console[] = [
     targetSellingPrice: 579.99,
     photos: [],
     createdAt: new Date("2024-02-20"),
+    updatedAt: new Date("2024-02-20"),
   },
   {
     id: "3",
@@ -39,6 +41,7 @@ export const sampleConsoles: Console[] = [
     targetSellingPrice: 349.99,
     photos: [],
     createdAt: new Date("2024-01-10"),
+    updatedAt: new Date("2024-01-10"),
   },
   {
     id: "4",
@@ -52,6 +55,7 @@ export const sampleConsoles: Console[] = [
     targetSellingPrice: 319.99,
     photos: [],
     createdAt: new Date("2023-12-05"),
+    updatedAt: new Date("2023-12-05"),
   },
 ];
 
@@ -69,6 +73,7 @@ export const sampleGames: Game[] = [
     platform: Platform.Disc,
     photos: [],
     createdAt: new Date("2024-01-20"),
+    updatedAt: new Date("2024-01-20"),
   },
   {
     id: "2",
@@ -83,6 +88,7 @@ export const sampleGames: Game[] = [
     platform: Platform.Disc,
     photos: [],
     createdAt: new Date("2024-02-15"),
+    updatedAt: new Date("2024-02-15"),
   },
   {
     id: "3",
@@ -97,6 +103,7 @@ export const sampleGames: Game[] = [
     platform: Platform.Cartridge,
     photos: [],
     createdAt: new Date("2024-01-12"),
+    updatedAt: new Date("2024-01-12"),
   },
   {
     id: "4",
@@ -111,6 +118,7 @@ export const sampleGames: Game[] = [
     platform: Platform.Disc,
     photos: [],
     createdAt: new Date("2023-12-28"),
+    updatedAt: new Date("2023-12-28"),
   },
   {
     id: "5",
@@ -125,6 +133,7 @@ export const sampleGames: Game[] = [
     platform: Platform.Disc,
     photos: [],
     createdAt: new Date("2024-01-25"),
+    updatedAt: new Date("2024-01-25"),
   },
 ];
 
@@ -143,6 +152,7 @@ export const sampleAccessories: Accessory[] = [
     consoleName: ConsoleName.PlayStation5,
     photos: [],
     createdAt: new Date("2024-01-16"),
+    updatedAt: new Date("2024-01-16"),
   },
   {
     id: "2",
@@ -158,6 +168,7 @@ export const sampleAccessories: Accessory[] = [
     consoleName: ConsoleName.XboxSeriesX,
     photos: [],
     createdAt: new Date("2024-02-21"),
+    updatedAt: new Date("2024-02-21"),
   },
   {
     id: "3",
@@ -173,6 +184,7 @@ export const sampleAccessories: Accessory[] = [
     consoleName: ConsoleName.PlayStation5,
     photos: [],
     createdAt: new Date("2024-01-17"),
+    updatedAt: new Date("2024-01-17"),
   },
   {
     id: "4",
@@ -188,5 +200,6 @@ export const sampleAccessories: Accessory[] = [
     consoleName: ConsoleName.NintendoSwitch,
     photos: [],
     createdAt: new Date("2024-01-13"),
+    updatedAt: new Date("2024-01-13"),
   },
 ];

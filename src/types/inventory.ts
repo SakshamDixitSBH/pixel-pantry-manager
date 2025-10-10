@@ -62,6 +62,7 @@ export interface Console {
   targetSellingPrice: number;
   photos: string[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Game {
@@ -77,6 +78,7 @@ export interface Game {
   platform: Platform;
   photos: string[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Accessory {
@@ -93,4 +95,5 @@ export interface Accessory {
   consoleName: ConsoleName;
   photos: string[];
   createdAt: Date;
+  updatedAt: Date;
 }
