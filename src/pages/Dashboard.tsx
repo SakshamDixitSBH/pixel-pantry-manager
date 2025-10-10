@@ -27,16 +27,16 @@ const Dashboard = () => {
   const totalAccessories = accessories.length;
 
   const totalValue = [
-    ...consoles.map(c => c.averageMarketPrice),
-    ...games.map(g => g.averageMarketPrice),
-    ...accessories.map(a => a.averageMarketPrice),
+    ...consoles.map((c) => c.averageMarketPrice),
+    ...games.map((g) => g.averageMarketPrice),
+    ...accessories.map((a) => a.averageMarketPrice),
   ].reduce((sum, price) => sum + price, 0);
 
   // Get recent items (sorted by createdAt, take last 6)
   const recentItems = [
-    ...consoles.map(c => ({ ...c, type: "Console" as const })),
-    ...games.map(g => ({ ...g, type: "Game" as const, name: g.title })),
-    ...accessories.map(a => ({ ...a, type: "Accessory" as const })),
+    ...consoles.map((c) => ({ ...c, type: "Console" as const })),
+    ...games.map((g) => ({ ...g, type: "Game" as const, name: g.title })),
+    ...accessories.map((a) => ({ ...a, type: "Accessory" as const })),
   ]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 6);
@@ -97,8 +97,8 @@ const Dashboard = () => {
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <p className="font-semibold text-foreground mb-1">{item.name}</p>
                     <p className="text-xs text-muted-foreground mb-1">SKU: {item.sku}</p>
+                    <p className="font-semibold text-foreground mb-1">{item.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {item.type === "Console" && `${item.brand} ${item.version}`}
                       {item.type === "Game" && item.genre}
@@ -109,13 +109,9 @@ const Dashboard = () => {
                     {item.type}
                   </Badge>
                 </div>
-                
-                {"condition" in item && (
-                  <Badge className={getConditionColor(item.condition)}>
-                    {item.condition}
-                  </Badge>
-                )}
-                
+
+                {"condition" in item && <Badge className={getConditionColor(item.condition)}>{item.condition}</Badge>}
+
                 <div className="mt-3 flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Market Value</span>
                   <span className="font-semibold text-primary">${item.averageMarketPrice.toFixed(2)}</span>
