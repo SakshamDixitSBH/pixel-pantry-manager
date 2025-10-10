@@ -101,6 +101,7 @@ const Consoles = () => {
               <TableHeader>
                 <TableRow className="bg-muted/50">
                   <TableHead className="min-w-[80px]">Photo</TableHead>
+                  <TableHead className="min-w-[100px]">SKU</TableHead>
                   <TableHead className="min-w-[150px]">Console</TableHead>
                   <TableHead className="min-w-[100px]">Brand</TableHead>
                   <TableHead className="min-w-[100px]">Version</TableHead>
@@ -127,6 +128,7 @@ const Consoles = () => {
                         )}
                       </div>
                     </TableCell>
+                    <TableCell>{console.sku}</TableCell>
                     <TableCell className="font-semibold">{console.name}</TableCell>
                     <TableCell>{console.brand}</TableCell>
                     <TableCell>

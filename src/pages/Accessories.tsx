@@ -101,6 +101,7 @@ const Accessories = () => {
               <TableHeader>
                 <TableRow className="bg-muted/50">
                   <TableHead className="min-w-[80px]">Photo</TableHead>
+                  <TableHead className="min-w-[100px]">SKU</TableHead>
                   <TableHead className="min-w-[180px]">Name</TableHead>
                   <TableHead className="min-w-[120px]">Type</TableHead>
                   <TableHead className="min-w-[120px]">Brand</TableHead>
@@ -129,6 +130,7 @@ const Accessories = () => {
                         )}
                       </div>
                     </TableCell>
+                    <TableCell>{accessory.sku}</TableCell>
                     <TableCell className="font-semibold">{accessory.name}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{accessory.type}</Badge>

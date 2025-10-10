@@ -101,6 +101,7 @@ const Games = () => {
               <TableHeader>
                 <TableRow className="bg-muted/50">
                   <TableHead className="min-w-[80px]">Photo</TableHead>
+                  <TableHead className="min-w-[100px]">SKU</TableHead>
                   <TableHead className="min-w-[180px]">Title</TableHead>
                   <TableHead className="min-w-[120px]">Brand</TableHead>
                   <TableHead className="min-w-[150px]">Console</TableHead>
@@ -128,6 +129,7 @@ const Games = () => {
                         )}
                       </div>
                     </TableCell>
+                    <TableCell>{game.sku}</TableCell>
                     <TableCell className="font-semibold">{game.title}</TableCell>
                     <TableCell>{game.brand}</TableCell>
                     <TableCell>{game.consoleName}</TableCell>
