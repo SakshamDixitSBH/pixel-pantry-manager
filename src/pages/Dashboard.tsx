@@ -26,14 +26,14 @@ const Dashboard = () => {
     .slice(0, 6);
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8">
       <div>
-        <h1 className="text-4xl font-bold text-foreground mb-2">Dashboard</h1>
-        <p className="text-muted-foreground">Overview of your retro gaming inventory</p>
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2">Dashboard</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Overview of your retro gaming inventory</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
         <StatsCard
           title="Total Consoles"
           value={totalConsoles}
@@ -63,10 +63,10 @@ const Dashboard = () => {
       {/* Recently Added */}
       <Card>
         <CardHeader>
-          <CardTitle>Recently Added Items</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Recently Added Items</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentItems.map((item) => (
               <div
                 key={`${item.type}-${item.id}`}

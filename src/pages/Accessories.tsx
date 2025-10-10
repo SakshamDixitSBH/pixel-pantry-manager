@@ -40,13 +40,13 @@ const Accessories = () => {
   };
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 lg:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Accessories</h1>
-          <p className="text-muted-foreground">Manage your gaming accessories</p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2">Accessories</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage your gaming accessories</p>
         </div>
-        <Button onClick={handleAdd} className="gap-2">
+        <Button onClick={handleAdd} className="gap-2 w-full sm:w-auto">
           <Plus className="w-4 h-4" />
           Add Accessory
         </Button>
@@ -54,9 +54,9 @@ const Accessories = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>All Accessories</span>
-            <div className="relative w-64">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span className="text-lg sm:text-xl">All Accessories</span>
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search accessories..."
@@ -68,20 +68,20 @@ const Accessories = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-border overflow-hidden">
+          <div className="rounded-lg border border-border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Console</TableHead>
-                  <TableHead>Model</TableHead>
-                  <TableHead>Color</TableHead>
-                  <TableHead>Condition</TableHead>
-                  <TableHead className="text-right">Bought</TableHead>
-                  <TableHead className="text-right">Market</TableHead>
-                  <TableHead className="text-right">Target</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="min-w-[150px]">Name</TableHead>
+                  <TableHead className="min-w-[120px]">Type</TableHead>
+                  <TableHead className="min-w-[150px]">Console</TableHead>
+                  <TableHead className="min-w-[100px]">Model</TableHead>
+                  <TableHead className="min-w-[100px]">Color</TableHead>
+                  <TableHead className="min-w-[100px]">Condition</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Bought</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Market</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Target</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

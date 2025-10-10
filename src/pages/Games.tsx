@@ -40,13 +40,13 @@ const Games = () => {
   };
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 lg:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Games</h1>
-          <p className="text-muted-foreground">Manage your game collection</p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-2">Games</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage your game collection</p>
         </div>
-        <Button onClick={handleAdd} className="gap-2">
+        <Button onClick={handleAdd} className="gap-2 w-full sm:w-auto">
           <Plus className="w-4 h-4" />
           Add Game
         </Button>
@@ -54,9 +54,9 @@ const Games = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>All Games</span>
-            <div className="relative w-64">
+          <CardTitle className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span className="text-lg sm:text-xl">All Games</span>
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search games..."
@@ -68,20 +68,20 @@ const Games = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="rounded-lg border border-border overflow-hidden">
+          <div className="rounded-lg border border-border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead>Title</TableHead>
-                  <TableHead>Genre</TableHead>
-                  <TableHead>Console</TableHead>
-                  <TableHead>Platform</TableHead>
-                  <TableHead>Condition</TableHead>
-                  <TableHead>Year</TableHead>
-                  <TableHead className="text-right">Bought</TableHead>
-                  <TableHead className="text-right">Market</TableHead>
-                  <TableHead className="text-right">Target</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="min-w-[180px]">Title</TableHead>
+                  <TableHead className="min-w-[120px]">Genre</TableHead>
+                  <TableHead className="min-w-[150px]">Console</TableHead>
+                  <TableHead className="min-w-[100px]">Platform</TableHead>
+                  <TableHead className="min-w-[100px]">Condition</TableHead>
+                  <TableHead className="min-w-[80px]">Year</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Bought</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Market</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Target</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
