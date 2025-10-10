@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Console, Game, Accessory, ConsoleName, ConsoleVersion, Condition, Platform, AccessoryType } from "@/types/inventory";
+import { Console, Game, Accessory, ConsoleName, ConsoleVersion, Condition, Platform, AccessoryType, Color } from "@/types/inventory";
 import { X, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 
@@ -222,7 +222,16 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 </div>
                 <div>
                   <Label htmlFor="color">Color</Label>
-                  <Input id="color" name="color" defaultValue={item ? (item as Console).color : ""} className="h-11" required />
+                  <Select name="color" defaultValue={item ? (item as Console).color : undefined} required>
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Select color" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover max-h-[300px]">
+                      {Object.values(Color).map((color) => (
+                        <SelectItem key={color} value={color}>{color}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </>
             )}
@@ -317,7 +326,16 @@ export const AddEditItemModal = ({ item, isOpen, onClose, onSave, type }: AddEdi
                 </div>
                 <div>
                   <Label htmlFor="color">Color</Label>
-                  <Input id="color" name="color" defaultValue={item ? (item as Accessory).color : ""} className="h-11" required />
+                  <Select name="color" defaultValue={item ? (item as Accessory).color : undefined} required>
+                    <SelectTrigger className="h-11">
+                      <SelectValue placeholder="Select color" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover max-h-[300px]">
+                      {Object.values(Color).map((color) => (
+                        <SelectItem key={color} value={color}>{color}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label htmlFor="condition">Condition</Label>
